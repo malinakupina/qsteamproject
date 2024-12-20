@@ -1,0 +1,76 @@
+<style>
+    /* Modal Background */
+    .modal {
+        position: fixed;
+        top: 40%;
+        left: 33%;
+        width:25%;
+        height:25%;        
+        /*background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; /* On top of other content */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        max-width: 450px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+    }
+
+    /* Modal Title */
+    .modal-content h3 {
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        color: #333;
+    }
+
+    /* Modal Action Buttons */
+    .modal-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 15px; /* Space between buttons */
+    }
+
+    .modal-actions button, .modal-actions a {
+        padding: 12px 25px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        border: none;
+        width: 120px;
+        text-align: center;
+    }
+
+    .btn-confirm {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-confirm:hover {
+        background-color: darkred;
+    }
+
+    .btn-cancel {
+        background-color: grey;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-cancel:hover {
+        background-color: darkgrey;
+    }
+
+    /* Add a nice hover effect for buttons */
+    .modal-actions .btn:hover {
+        opacity: 0.85;
+    }
+</style>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projekti</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/modal1.css">
+</head>
+<body>
+    <header>
+        <% if (user) { %>
+            <h1 style="font-size: 30px;">Dobrodošao, <%= user.username %>!<br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
+        <% } else { %>
+            <h1>Dobrodošli na QS Team Projects Site</h1>
+        <% } %>
+        <% if (user) { %>
+        <nav>
+            <a href="/">Početna</a>
+            <a href="/projects">Projekti</a>
+            <% if (user) { %>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+            <% } %>
+        </nav>
+        
+    </header>
+
+
+<div class="projects-container">
+    <h2 class="projects-title">Trenutno Kreirani Projekti</h2>
+    <ul class="post-list">
+        <% projects.forEach(project => { %>
+            <li class="post-item">
+                <div class="project-item-container">
+                    <a href="/project/<%= project.id %>" class="project-link"><%= project.name %></a>
+                    <a href="/edit-project/<%= project.id %>" class="btn-edit-project">Edit</a>
+                </div>
+            </li>
+        <% }); %>
+    </ul>
+</div>
+<% } %>
+
+
+<%- include('partials/footer') %>
+
+<!-- Modalni dijalog - Prikazujemo samo ako postoji poruka -->
+<% if (typeof message !== 'undefined' && message) { %>  <!-- Provera da li message postoji -->
+    <div id="warningModal" class="modal show"> <!-- Dodajemo class 'show' ako postoji poruka -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Upozorenje</h3>
+            <p><%= message %></p> <!-- Prikazivanje poruke -->
+            <button class="btn-close" onclick="closeModal()">Zatvori</button>
+        </div>
+    </div>
+<% } %>
+
+<!-- Modal script -->
+<script>
+    var modal = document.getElementById("warningModal");
+    var span = document.getElementsByClassName("close")[0];
+
+    // Funkcija za prikazivanje modala
+    function showModal() {
+        modal.style.display = "block";
+    }
+
+    // Funkcija za zatvaranje modala
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // Klik na "x" zatvara modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Ako korisnik klikne izvan modala, zatvori ga
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Ako postoji 'show' klasa na modal, prikazujemo modal
+    if (modal.classList.contains("show")) {
+        showModal();
+    }
+</script>
+
+<!-- Uključi stilove za modal -->
+ <!-- Uključi stilove za modal -->

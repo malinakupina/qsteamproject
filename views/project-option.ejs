@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<h2>Postovi za Projekat: <span><%= project.name %></span> - Opcija: <span><%= option.name %></span></h2>
+
+<!-- Dugme za kreiranje posta -->
+<a href="/project/<%= project.id %>/<%= option.name %>/create-post" class="btn-create-post">
+    Kreiraj Post
+</a>
+
+<!-- Dugme za povratak na projekat -->
+<a href="/project/<%= project.id %>" class="btn-back">
+    Vratite se na Projekat
+</a>
+
+<!-- Prikazivanje svih postova vezanih za ovu opciju -->
+<% if (option.posts && option.posts.length > 0) { %>
+    <ul class="post-list">
+        <% option.posts.forEach(post => { %>
+            <li class="post-item">
+                <h2 class="post-title"><%= post.title %></h2>
+                <div class="content-wrapper">
+                    <% if (post.imageUrl) { %>
+                        <img src="<%= post.imageUrl %>" alt="Slika posta" class="post-image">
+                    <% } %>
+                    <div class="post-content">
+                        <p><%= post.content %></p>
+                    </div>
+                </div>
+                <div class="post-actions">
+                    <!-- Edit dugme -->
+                    <a href="/project/<%= project.id %>/option/<%= option.name %>/edit/<%= post.id %>" class="btn btn-edit">Edit</a>
+                    <!-- Delete dugme -->
+                    <a href="/project/<%= project.id %>/option/<%= option.name %>/delete/<%= post.id %>" class="btn btn-delete">Delete</a>
+                </div>
+            </li>
+        <% }); %>
+    </ul>
+<% } else { %>
+    <p>Nema postova za ovu opciju.</p>
+<% } %>
+
+<%- include('partials/footer') %>

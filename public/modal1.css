@@ -1,0 +1,72 @@
+
+
+/* Osnovni stil za modalni dijalog */
+.modal {
+    display: none; /* Skriva modal po defaultu */
+    position: fixed;
+    z-index: 1; /* Modal je iznad ostalog sadržaja */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* Poluprovidna crna pozadina */
+    padding-top: 60px; /* Povećanje distance sa vrha */
+}
+
+/* Sadržaj modala */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px; /* Blago zaobljeni uglovi */
+    text-align: center;
+}
+
+/* Stil za dugme za zatvaranje ("x") */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Promena boje kada se pređe mišem preko dugmeta za zatvaranje */
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Stil za dugme "Zatvori" */
+.btn-close {
+    background-color: #4CAF50; /* Zelena boja */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* Efekat pri prelasku mišem na dugme "Zatvori" */
+.btn-close:hover {
+    background-color: #45a049; /* Tamnija zelena boja pri hover-u */
+}
+
+/* Dodavanje padding-a i centriranje tekstova */
+h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}

@@ -1,0 +1,57 @@
+
+<!-- create-project.ejs -->
+<%- include('partials/header') %> <!-- Ovo uključuje header.ejs -->
+
+<div class="form-container">
+    <h2 class="form-title">Kreiraj Novi Projekat</h2>
+    <!-- Forma za unos novog projekta -->
+    <form action="/create-project" method="POST">
+        <div class="form-group">
+            <label for="name">Naziv Projekta</label>
+            <input type="text" autocomplete="off" id="name" name="name" required />
+        </div>
+        <div class="form-group">
+            <label for="description">Opis Projekta</label>
+            <textarea id="description" autocomplete="off" name="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="options">Opcije</label><br>
+            <div class="options-container">
+
+                <input type="checkbox" id="protokol" name="options" value="protokol" required>
+                <label for="protokol">Protokol</label><br>                   
+
+                <input type="checkbox" id="reklamacije_kupca" name="options" value="reklamacija_kupca" required>
+                <label for="reklamacije">Reklamacija Kupca</label><br>
+
+                <input type="checkbox" id="vkontrola" name="options" value="vizuelna_kontrola">
+                <label for="vkontrola">Vizuelna Kontrola</label><br>
+
+                <input type="checkbox" id="povezivanje" name="options" value="povezivanje_na_tester">
+                <label for="povezivanje">Povezivanje na Tester</label><br>                
+
+                <input type="checkbox" id="testiranje" name="options" value="testiranje">
+                <label for="testiranje">Testiranje</label><br>
+
+                <input type="checkbox" id="hv_test" name="options" value="hv_test">
+                <label for="hvtest">HV Test</label><br>
+
+                <input type="checkbox" id="dokumentacija" name="options" value="dokumentacija">
+                <label for="spisak">Dokumentacija</label><br> 
+
+                <input type="checkbox" id="spisak" name="options" value="spisak_gresaka">
+                <label for="spisak">Spisak Gresaka</label><br> 
+
+                
+            </div>
+            <!-- Dugme za slanje forme koje se nalazi desno od opcija -->
+            <button type="submit" class="submit-btn">Kreiraj</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+<%- include('partials/footer') %> <!-- Ovo uključuje footer.ejs -->

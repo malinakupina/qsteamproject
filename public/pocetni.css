@@ -1,0 +1,140 @@
+/* Stil za container na početnoj stranici */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Stil za formu u create-project */
+
+/* Stil za formu */
+/* Stil za formu */
+.form-container {
+  max-width: 500px; /* Maksimalna širina forme */
+  margin: 20px auto; /* Centriranje forme */
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra oko forme */
+}
+
+/* Stil za naslov forme */
+.form-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Stil za grupu unosa */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Stil za labelu */
+.form-group label {
+  font-size: 16px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Stil za unos teksta (input i textarea) */
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box; /* Dodaj padding unutar dimenzija inputa */
+}
+
+/* Stil za grupu opcija i dugme */
+.form-group {
+  display: flex;
+  flex-wrap: wrap; /* Omogućava prelazak na sledeći red ako je potrebno */
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Stil za div koji sadrži checkbox-ove */
+.options-container {
+  flex: 1; /* Opcije će zauzeti preostali prostor */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Stil za dugme */
+.submit-btn {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 20px; /* Razmak između opcija i dugmeta */
+}
+
+/* Efekat kada se pređe mišem preko dugmeta */
+.submit-btn:hover {
+  background-color: #2980b9;
+}
+
+
+
+
+
+.checkbox-container {
+  margin-top: 20px;
+}
+
+.checkbox-label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.btn {
+  background-color: #007bff;
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.projects-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.projects-title {
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.post-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.post-item {
+  margin-bottom: 10px;
+}
+
+.project-link {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}

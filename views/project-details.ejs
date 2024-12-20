@@ -1,0 +1,19 @@
+
+
+<%- include('partials/header') %>  <!-- Uključuje header deo iz partials foldera -->
+
+<h2>Opcije za Projekat: <%= project.name %></h2>
+
+<!-- Prikazivanje opcija kao linkova -->
+<ul class="post-list">
+  <% if(project.options ) { project.options.forEach(option => { %>
+    <li class="option-item post-item">
+        <!-- Koristimo option.name umesto option -->
+        <a href="/project/<%= project.id %>/<%= option.name %>" class="option-link btn ">
+            <%= option.name %> <!-- Ispisujemo ime opcije -->
+        </a>
+    </li>
+  <%  });} %>
+</ul>
+
+<%- include('partials/footer') %>  <!-- Uključuje footer deo iz partials foldera -->

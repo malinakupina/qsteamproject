@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+
+<h2>Postovi za Projekat: <%= project.name %></h2>
+
+<!-- Prikazivanje opcija kao linkova -->
+<ul>
+<% project.options.forEach(option => { %>
+    <li class="option-item">
+        <!-- Koristimo option.name umesto option -->
+        <a href="/project/<%= project.id %>/<%= option.name.replace(/\s+/g, '-').toLowerCase() %>" class="option-link">
+            <%= option.name %> <!-- Ispisujemo ime opcije -->
+        </a>
+    </li>
+<% }); %>
+</ul> 
+
+
+<%- include('partials/footer') %>

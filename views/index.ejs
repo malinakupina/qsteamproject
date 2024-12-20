@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+
+
+<div class="container welcome-message">
+    <h1 class="title">QS Team Projects GUI</h1>
+
+    <% if (!user) { %>  <!-- Check if user is not defined -->
+        <a href="/login" class="btn">Dobrodošli na QS Team Projects Site. Molimo Vas da se logujete.</a>
+    <% } else { %>
+        <div class="btn-container">
+            <a href="/projects" class="btn">Trenutno Kreirani Projekti</a>
+            <a href="/create-project" class="btn">Kreiraj Novi Projekat</a>
+        </div>
+        
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

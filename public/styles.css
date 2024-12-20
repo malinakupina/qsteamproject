@@ -1,0 +1,413 @@
+
+
+/* Globalne stilove */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f4f4f4;
+}
+
+header {
+  background-color: #4CAF50;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid #ddd;
+}
+
+header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+header nav {
+  margin-top: 10px;
+}
+
+header nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+header nav a:hover {
+  color: #FFD700;
+}
+
+.btn, .btn-create-post {
+  display: inline-block;
+  background-color: #3498db; /* Plava boja pozadine */
+  color: white; /* Bela boja teksta */
+  font-size: 18px; /* Srednja veličina fonta */
+  padding: 12px 24px; /* Razmak unutar dugmeta */
+  text-align: center; /* Centriranje teksta unutar dugmeta */
+  border-radius: 5px; /* Zaobljeni uglovi */
+  text-decoration: none; /* Uklanja podvlačenje */
+  transition: background-color 0.3s; /* Glatka animacija pri promeni boje */
+}
+
+/* Edit dugme - zeleno */
+.btn-edit {
+  background-color: #28a745; /* Zeleno pozadina */
+}
+
+.btn-edit:hover {
+  background-color: #218838; /* Tamnija zelena pri hoveru */
+}
+
+/* Delete dugme - crveno */
+.btn-delete {
+  background-color: #f44336; /* Crvena pozadina */
+  border: 2px solid #d32f2f; /* Crveni border za Delete */
+}
+
+.btn-delete:hover {
+  background-color: #d32f2f; /* Tamnija crvena pri hoveru */
+}
+
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.options-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.options-container label {
+  font-size: 16px;
+  margin-left: 5px;
+}
+
+.submit-btn {
+  display: inline-block;
+  padding: 12px 20px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+footer {
+  background-color: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+footer p {
+  font-size: 16px;
+  margin: 0;
+}
+
+footer p span {
+  font-weight: bold;
+}
+
+.post-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.post-item {
+  background-color: white;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.post-title {
+  font-size: 1.8em;
+  margin: 0;
+}
+
+h3 {
+  font-size: 1.5em;
+  color: #333;
+  background-color: #f4f4f4;
+  padding: 10px 20px;
+  border-left: 5px solid #3498db;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h3 span {
+  color: #3498db;
+  font-weight: bold;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.content-wrapper img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.post-content {
+  flex: 1;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.post-actions .btn {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .content-wrapper {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .content-wrapper img {
+      width: 100%;
+      height: auto;
+      max-width: 300px;
+  }
+
+  .post-actions .btn {
+      width: 100%;
+      margin-bottom: 10px;
+  }
+
+  form {
+      width: 90%;
+  }
+}
+
+.project-link {
+  font-size: 18px;
+  color: #4CAF50;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.project-link:hover {
+  color: #2e8b57;
+  transform: scale(1.1);
+}
+
+.projects-container {
+  margin: 20px;
+}
+
+.projects-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Opcije sa linkovima u projektu sa istom širinom */
+.options-container a {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #f4f4f4;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+  margin: 5px 0;
+  color: #333;
+}
+
+.options-container a:hover {
+  background-color: #ddd;
+}
+
+.project-item-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.project-link {
+  font-size: 18px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}
+
+/* Poseban stil za dugme edit, sa odmakom od linka */
+.btn-edit-project {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  display: inline-block;
+  margin-left: 20px; /* Odmak od linka */
+}
+
+.btn-edit-project:hover {
+  background-color: #218838;
+}
+
+/* Stilizacija forme */
+form {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+form input {
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+  width: 300px;
+}
+
+form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* Stilizacija liste opcija */
+ul {
+  margin-top: 20px;
+}
+
+ul li {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.hint {
+  font-size: 14px;
+  color: #888;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* Stilizacija pozdravne poruke */
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centriranje sadržaja vertikalno */
+  align-items: center;
+  height: 90vh;  /* Visina stranice 90% */
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: -70px; /* Manji pomak prema gore */
+}
+
+/* Stil za kontejner linkova */
+.btn-container {
+  display: flex;          /* Koristi flexbox za raspored */
+  gap: 10px;              /* Razmak između linkova */
+  justify-content: center; /* Centriranje linkova u okviru kontejnera */
+  margin-bottom: 20px;     /* Razmak ispod linkova */
+}
+
+/* Stil za dugme 'Vrati se na Projekat' */
+.btn-back {
+  background-color: #007bff;  /* Plava boja pozadine */
+  color: white;               /* Bela boja teksta */
+  padding: 12px 24px;         /* Razmak unutar dugmeta */
+  text-align: center;         /* Centriranje teksta unutar dugmeta */
+  border-radius: 5px;         /* Zaobljeni uglovi */
+  text-decoration: none;      /* Uklanja podvlačenje */
+  display: inline-block;      /* Da bude inline sa drugim elementima */
+  margin-top: 10px;           /* Razmak od drugih elemenata iznad */
+  transition: background-color 0.3s ease; /* Glatka animacija pri promeni boje */
+}
+
+/* Hover efekat za dugme 'Vrati se na Projekat' */
+.btn-back:hover {
+  background-color: #0056b3;  /* Tamnija plava boja pri hover-u */
+}
+
+/* Active efekat za dugme 'Vrati se na Projekat' */
+.btn-back:active {
+  background-color: #003f7f;  /* Još tamnija plava pri kliku */
+}
+
+
+
+
