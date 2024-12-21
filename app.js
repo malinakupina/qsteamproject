@@ -12,10 +12,12 @@ import connectRedis from 'connect-redis';
 const app = express();
 const port = 3000;
 
+// Inicijalizacija Redis-a koristeći environment varijable
 const RedisStore = connectRedis(session);
 const redisClient = new Redis({
-  host: 'localhost',  // Za lokalnu instancu Redis-a
-  port: 6379,         // Podrazumevani port
+  host: process.env.REDIS_HOST, // Koristi REDIS_HOST varijablu
+  port: process.env.REDIS_PORT, // Koristi REDIS_PORT varijablu
+  password: process.env.REDIS_PASSWORD, // Ako je potrebno, koristi REDIS_PASSWORD
 });
 
 app.use(
@@ -24,7 +26,7 @@ app.use(
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true },
+    cookie: { secure: true, httpOnly: true },
   })
 );
 
