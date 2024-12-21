@@ -6,35 +6,36 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
-import RedisStore from 'connect-redis';
-
-
-
+import express from 'express';
+import session from 'express-session';
 import { createClient } from 'redis';
-
-
+import { RedisStore } from 'connect-redis';
 
 const app = express();
 const port = 3000;
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
-
 // Kreiraj Redis klijent
 const redisClient = createClient({
-  host: 'localhost',  // Ako koristiš lokalni Redis
-  port: 6379,         // Podrazumevani port za Redis
+  socket: {
+    host: 'localhost',
+    port: 6379,
+  },
 });
 
-redisClient.connect();  // Poveži se sa Redis serverom
+redisClient.connect().catch(console.error);
 
-// Nova konfiguracija sesije sa Redis store
 app.use(session({
   store: new RedisStore({ client: redisClient }),
-  secret: 'tvoj_sekret_za_sesiju',
+  secret: 'your_session_secret',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }  // Ako koristiš HTTPS, postavi `secure: true`
+  cookie: { secure: false }
 }));
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
 
 // Rest of the code...
 
