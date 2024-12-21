@@ -22,14 +22,16 @@ const redisClient = new Redis({
 
 app.use(
   session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: redisClient }), // Postavljanje RedisStore za čuvanje sesija
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true, httpOnly: true },
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // Obavezno koristi secure za produkciju
+      httpOnly: true, // Postavljanje HTTPOnly
+    },
   })
 );
-
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
