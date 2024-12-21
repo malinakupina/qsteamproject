@@ -6,10 +6,48 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
+import RedisStore from 'connect-redis';
+import { createClient } from 'redis';
 
 
 const app = express();
 const port = 3000;
+
+import express from 'express';
+import session from 'express-session';
+import RedisStore from 'connect-redis';
+import { createClient } from 'redis';
+
+const app = express();
+
+// Kreiraj Redis klijent
+const redisClient = createClient({
+  host: 'localhost', // Ako koristiš lokalni Redis
+  port: 6379, // Podrazumevani port za Redis
+  // Možeš dodati druge parametre ako koristiš Redis na udaljenom serveru
+});
+
+redisClient.connect();  // Ovo je važno za povezivanje sa Redis serverom
+
+app.use(session({
+  store: new RedisStore({ client: redisClient }),
+  secret: 'tvoj_sekret_za_sesiju',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // Ako koristiš HTTPS, postavi `secure: true`
+}));
+
+app.get('/', (req, res) => {
+  if (req.session.views) {
+    req.session.views++;
+    res.send(`<p>Broj pregleda: ${req.session.views}</p>`);
+  } else {
+    req.session.views = 1;
+    res.send('<p>Dobrodošli na stranicu!</p>');
+  }
+});
+
+
 
 
 
@@ -52,11 +90,8 @@ if (fs.existsSync(projectsFilePath)) {
 // Middleware za sesiju
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(session({
-    secret: 'secret-key',
-    resave: false,
-    saveUninitialized: true
-}));
+
+
 
 // Podesavanje view engine
 app.set('view engine', 'ejs');
