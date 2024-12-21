@@ -9,51 +9,25 @@ import cookie from 'cookie';
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
 
-
 const app = express();
 const port = 3000;
 
-import express from 'express';
-import session from 'express-session';
-import RedisStore from 'connect-redis';
-import { createClient } from 'redis';
-
-const app = express();
-
 // Kreiraj Redis klijent
 const redisClient = createClient({
-  host: 'localhost', // Ako koristiš lokalni Redis
-  port: 6379, // Podrazumevani port za Redis
-  // Možeš dodati druge parametre ako koristiš Redis na udaljenom serveru
+  host: 'localhost',  // Ako koristiš lokalni Redis
+  port: 6379,         // Podrazumevani port za Redis
 });
 
-redisClient.connect();  // Ovo je važno za povezivanje sa Redis serverom
+redisClient.connect();  // Poveži se sa Redis serverom
 
+// Nova konfiguracija sesije sa Redis store
 app.use(session({
   store: new RedisStore({ client: redisClient }),
   secret: 'tvoj_sekret_za_sesiju',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // Ako koristiš HTTPS, postavi `secure: true`
+  cookie: { secure: false }  // Ako koristiš HTTPS, postavi `secure: true`
 }));
-
-app.get('/', (req, res) => {
-  if (req.session.views) {
-    req.session.views++;
-    res.send(`<p>Broj pregleda: ${req.session.views}</p>`);
-  } else {
-    req.session.views = 1;
-    res.send('<p>Dobrodošli na stranicu!</p>');
-  }
-});
-
-
-
-
-
-
-
-
 
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -91,8 +65,6 @@ if (fs.existsSync(projectsFilePath)) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-
 // Podesavanje view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -100,17 +72,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware da bi se user prosledio u svaki ejs fajl
 app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;  // Prosleđujemo user iz sesije
-    next();
+  res.locals.user = req.session.user || null;  // Prosleđujemo user iz sesije
+  next();
 });
 
 // Middleware za proveru prijavljenosti korisnika
 function ensureAuthenticated(req, res, next) {
-    if (req.session.user) {
-        return next();
-    } else {
-        res.redirect('/login');
-    }
+  if (req.session.user) {
+    return next();
+  } else {
+    res.redirect('/login');
+  }
 }
 
 // Rute
@@ -135,13 +107,7 @@ app.post('/login', (req, res) => {
     }
 });
 
-// Početna stranica
-app.get('/',(req, res) => {
-    res.render('index');
-});
-
 // Kreiranje projekta
-// Editovanje posta
 app.get('/project/:projectId/option/:optionName/edit/:postId', ensureAuthenticated, (req, res) => {
     const { projectId, optionName, postId } = req.params;
     const project = projects.find(p => p.id == projectId);  // Pronađi projekat po ID
@@ -185,7 +151,6 @@ app.post('/project/:projectId/option/:optionName/edit/:postId', upload.single('i
     res.redirect(`/project/${projectId}/${optionName}`);  // Nakon editovanja, redirektuj korisnika na stranicu opcije
 });
 
-
 // Projekti
 app.get('/projects',ensureAuthenticated, (req, res) => {
     res.render('projects', { projects });
@@ -201,7 +166,6 @@ app.get('/project/:id', ensureAuthenticated, (req, res) => {
     }
 });
 
-//kreiranje projekta
 // Kreiranje projekta
 app.get('/create-project', ensureAuthenticated, (req, res) => {
     res.render('create-project', { error: null });
@@ -256,145 +220,6 @@ app.post('/create-project', (req, res) => {
              res.redirect('/projects');
         }
     });
-
-    
-});
-//kra kreiranja projekta
-
-// Projekti
-app.get('/projects', (req, res) => {
-    res.render('projects', { projects });
-});
-
-//kraj kreiranja projekta
-
-// Ruta za prikazivanje postova za određenu opciju
-app.get('/project/:projectId/:optionName/create-post', ensureAuthenticated, (req, res) => {
-    const { projectId, optionName } = req.params;
-
-    const project = projects.find(p => p.id === parseInt(projectId));
-    if (!project) {
-        return res.status(404).send('Projekt nije pronađen');
-    }
-
-    const option = project.options.find(o => o.name === optionName); 
-    if (!option) {
-        return res.status(404).send('Opcija nije pronađena');
-    }
-
-    if (!option.posts) {
-        option.posts = [];
-    }
-
-    res.render('option-posts', { project, option });
-});
-
-// Ruta za POST zahtev za kreiranje posta
-app.post('/project/:projectId/option/:optionName/create-post', upload.single('imageUrl'), (req, res) => {
-    const { projectId, optionName } = req.params;
-    const { title, content } = req.body;  
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
-
-    const project = projects.find(p => p.id === parseInt(projectId));
-    if (!project) {
-        return res.status(404).send('Projekt nije pronađen');
-    }
-
-    const option = project.options.find(o => o.name === optionName);
-    if (!option) {
-        return res.status(404).send('Opcija nije pronađena');
-    }
-
-    const newPost = {
-        id: option.posts.length + 1,  
-        title,
-        content,
-        imageUrl, 
-        date: new Date()
-    };
-
-    option.posts.push(newPost);
-
-    res.redirect(`/project/${project.id}/${option.name}`); 
-});
-
-// Editovanje i brisanje
-app.get('/project/:projectId/option/:optionName/edit/:postId', ensureAuthenticated, (req, res) => {
-    const { projectId, optionName, postId } = req.params;
-    const project = projects.find(p => p.id == projectId);
-    const option = project.options.find(o => o.name === optionName);
-    const post = option.posts.find(p => p.id == postId);
-
-    if (post) {
-        res.render('edit', { 
-            post: post,
-            projectId: projectId,
-            optionName: optionName
-        });
-    } else {
-        res.redirect('/');
-    }
-});
-
-app.post('/project/:projectId/option/:optionName/edit/:postId', upload.single('imageUrl'), (req, res) => {
-    const { projectId, optionName, postId } = req.params;
-    const { title, content } = req.body;
-    let imageUrl = req.file ? `/uploads/${req.file.filename}` : null; 
-
-    const project = projects.find(p => p.id == projectId);
-    if (!project) {
-        return res.redirect('/');
-    }
-
-    const option = project.options.find(o => o.name === optionName);
-    if (!option) {
-        return res.redirect('/');
-    }
-
-    const post = option.posts.find(p => p.id == postId);
-    if (post) {
-        post.title = title;
-        post.content = content;
-        post.imageUrl = imageUrl || post.imageUrl;  
-    }
-
-    res.redirect(`/project/${projectId}/${optionName}`);
-});
-
-// Brisanje
-app.get('/project/:projectId/option/:optionName/delete/:postId', ensureAuthenticated, (req, res) => {
-    const { projectId, optionName, postId } = req.params;
-    const project = projects.find(p => p.id == projectId);
-    
-    if (project) {
-        const option = project.options.find(o => o.name === optionName);
-        const post = option.posts.find(p => p.id == postId);
-        
-        if (post) {
-            res.render('modal', { post: post, project: project, option: option });
-        } else {
-            res.redirect(`/project/${projectId}/${optionName}`);
-        }
-    } else {
-        res.redirect('/');
-    }
-});
-
-app.post('/delete/:postId', (req, res) => {
-    const { postId } = req.params;
-    let postToDelete;
-    
-    for (let project of projects) {
-        for (let option of project.options) {
-            const postIndex = option.posts.findIndex(p => p.id == postId);
-            if (postIndex !== -1) {
-                postToDelete = option.posts.splice(postIndex, 1)[0];
-                return res.redirect(`/project/${project.id}/${option.name}`);
-            }
-        }
-    }
-
-    res.redirect('/');
 });
 
 // Ruta za prikazivanje postova za određenu opciju
