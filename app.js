@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
-import session from 'cookie-session';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
