@@ -8,8 +8,10 @@ import fs from 'fs';
 import cookie from 'cookie';
 import express from 'express';
 import session from 'express-session';
-import { createClient } from 'redis';
-import { RedisStore } from 'connect-redis';
+import express from 'express';
+import session from 'express-session';
+import { createClient } from 'redis';  // Redis 4.x klijent
+import { RedisStore } from 'connect-redis';  // connect-redis 7.x verzija
 
 const app = express();
 const port = 3000;
@@ -17,24 +19,43 @@ const port = 3000;
 // Kreiraj Redis klijent
 const redisClient = createClient({
   socket: {
-    host: 'localhost',
-    port: 6379,
+    host: 'localhost', // Adresa Redis servera
+    port: 6379,        // Podrazumevani port za Redis
   },
+  // Opcionalno: Podesi autentifikaciju ako koristiš Redis sa password-om
+  // password: 'your_redis_password'
 });
 
-redisClient.connect().catch(console.error);
+// Poveži se sa Redis serverom
+redisClient.connect().catch((err) => console.error('Greška pri povezivanju sa Redisom:', err));
 
+// Konfiguracija sesije sa RedisStore
 app.use(session({
-  store: new RedisStore({ client: redisClient }),
-  secret: 'your_session_secret',
+  store: new RedisStore({ client: redisClient }),  // Povezivanje sa Redis store
+  secret: 'your_session_secret',                   // Tajni ključ za sesije
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }
+  cookie: { secure: false } // Ako koristiš HTTPS, postavi `secure: true`
 }));
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+// Test ruta za sesiju
+app.get('/', (req, res) => {
+  if (req.session.views) {
+    req.session.views++;
+    res.send(`<h1>Početna stranica</h1><p>Broj poseta: ${req.session.views}</p>`);
+  } else {
+    req.session.views = 1;
+    res.send(`<h1>Početna stranica</h1><p>Dobrodošli!</p>`);
+  }
 });
+
+// Pokretanje servera
+app.listen(port, () => {
+  console.log(`Server radi na http://localhost:${port}`);
+});
+
+
+
 
 
 // Rest of the code...
