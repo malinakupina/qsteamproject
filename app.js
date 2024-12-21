@@ -6,6 +6,8 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
+import * as RedisStore from 'connect-redis';
+
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
 
