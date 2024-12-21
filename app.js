@@ -6,16 +6,14 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
-import * as RedisStore from 'connect-redis';
+import RedisStore from 'connect-redis';  // Correct import
 
-import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
 
 const app = express();
 const port = 3000;
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
-
 
 // Kreiraj Redis klijent
 const redisClient = createClient({
@@ -33,6 +31,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: false }  // Ako koristiš HTTPS, postavi `secure: true`
 }));
+
+// Rest of the code...
+
 
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
