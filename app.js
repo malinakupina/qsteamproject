@@ -6,7 +6,7 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { createClient } from 'redis';  // Redis 4.x klijent
-import { RedisStore } from 'connect-redis';  // connect-redis 7.x verzija
+import RedisStore from 'connect-redis';  // connect-redis 7.x verzija
 
 const app = express();
 const port = 3000;
