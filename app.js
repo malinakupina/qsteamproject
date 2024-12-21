@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import session from 'cookie-session';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
@@ -10,6 +11,27 @@ import cookie from 'cookie';
 
 const app = express();
 const port = 3000;
+
+
+app.set('trust proxy', 1);
+
+app.use(session({
+cookie:{
+    secure: true,
+    maxAge:60000
+       },
+store: new RedisStore(),
+secret: 'secret',
+saveUninitialized: true,
+resave: false
+}));
+
+app.use(function(req,res,next){
+if(!req.session){
+    return next(new Error('Oh no')) //handle error
+}
+next() //otherwise continue
+});
 
 
 // Inicijalizacija za ES module
