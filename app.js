@@ -16,6 +16,7 @@ const redisClient = createClient({
   socket: {
     host: 'localhost', // Adresa Redis servera
     port: 6379,        // Podrazumevani port za Redis
+     connectTimeout: 10000  // 10 sekundi timeout
   },
   // Opcionalno: Podesi autentifikaciju ako koristiš Redis sa password-om
   // password: 'your_redis_password'
@@ -79,6 +80,16 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null;  // Prosleđujemo user iz sesije
   next();
 });
+
+// Povećanje timeout-a na Express serveru
+app.use((req, res, next) => {
+  res.setTimeout(5000, () => { // 5 sekundi timeout
+    console.log('Request timed out');
+    res.sendStatus(504);
+  });
+  next();
+});
+
 
 // Middleware za proveru prijavljenosti korisnika
 function ensureAuthenticated(req, res, next) {
