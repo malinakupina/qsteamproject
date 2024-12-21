@@ -1,4 +1,4 @@
-try {
+
 
 
 import express from 'express';
@@ -273,11 +273,9 @@ app.get('/logout', (req, res) => {
 });
 
 // Pokretanje servera
+// Pokretanje servera
 app.listen(port, () => {
     console.log(`Server radi na http://localhost:${port}`);
 });
-}catch (error) {
-    console.error('Greška:', error);
-    return res.status(500).json({ message: 'Nešto je pošlo po zlu' });
-}
+
     
