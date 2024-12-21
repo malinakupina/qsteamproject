@@ -12,6 +12,9 @@ import { createClient } from 'redis';
 const app = express();
 const port = 3000;
 
+app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
+
+
 // Kreiraj Redis klijent
 const redisClient = createClient({
   host: 'localhost',  // Ako koristiš lokalni Redis
