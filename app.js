@@ -6,9 +6,27 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
+import Redis from 'ioredis';
+import connectRedis from 'connect-redis';
 
 const app = express();
 const port = 3000;
+
+const RedisStore = connectRedis(session);
+const redisClient = new Redis({
+  host: 'localhost',  // Za lokalnu instancu Redis-a
+  port: 6379,         // Podrazumevani port
+});
+
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true },
+  })
+);
 
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
