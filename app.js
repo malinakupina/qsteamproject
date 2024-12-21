@@ -1,6 +1,3 @@
-
-
-
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
@@ -9,12 +6,8 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 
-const app = express();
-const port = 3000;
-
 // Inicijalizacija za ES module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const app = express();
 
 // Dummy korisnici
 const users = [
@@ -44,10 +37,10 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',  // Koristi secure kolačiće samo u produkciji
-        maxAge: 1000 * 60 * 60 * 24 * 7,  // Sesija traje 7 dana
-        httpOnly: true,  // Samo server može da pristupa kolačiću
-        sameSite: 'strict'  // Sprečava slanje kolačića sa drugih domena
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        httpOnly: true,
+        sameSite: 'strict'
     }
 }));
 
@@ -95,7 +88,6 @@ app.get('/create-project', ensureAuthenticated, (req, res) => {
 
 app.post('/create-project', (req, res) => {
     const { name, description, options } = req.body;
-
     let optionObjects = [];
     for (let i = 0; i < options.length; i++) {
         let optionName = options[i];
@@ -186,85 +178,6 @@ app.post('/project/:projectId/option/:optionName/create-post', multer({ dest: 'p
     res.redirect(`/project/${project.id}/${option.name}`);
 });
 
-// Editovanje i brisanje postova
-app.get('/project/:projectId/option/:optionName/edit/:postId', ensureAuthenticated, (req, res) => {
-    const { projectId, optionName, postId } = req.params;
-    const project = projects.find(p => p.id == projectId);
-    const option = project.options.find(o => o.name === optionName);
-    const post = option.posts.find(p => p.id == postId);
-
-    if (post) {
-        res.render('edit', { 
-            post: post,
-            projectId: projectId,
-            optionName: optionName
-        });
-    } else {
-        res.redirect('/');
-    }
-});
-
-app.post('/project/:projectId/option/:optionName/edit/:postId', multer({ dest: 'public/uploads/' }).single('imageUrl'), (req, res) => {
-    const { projectId, optionName, postId } = req.params;
-    const { title, content } = req.body;
-    let imageUrl = req.file ? `/uploads/${req.file.filename}` : null; 
-
-    const project = projects.find(p => p.id == projectId);
-    if (!project) {
-        return res.redirect('/');
-    }
-
-    const option = project.options.find(o => o.name === optionName);
-    if (!option) {
-        return res.redirect('/');
-    }
-
-    const post = option.posts.find(p => p.id == postId);
-    if (post) {
-        post.title = title;
-        post.content = content;
-        post.imageUrl = imageUrl || post.imageUrl;  
-    }
-
-    res.redirect(`/project/${projectId}/${optionName}`);
-});
-
-// Brisanje posta
-app.get('/project/:projectId/option/:optionName/delete/:postId', ensureAuthenticated, (req, res) => {
-    const { projectId, optionName, postId } = req.params;
-    const project = projects.find(p => p.id == projectId);
-    
-    if (project) {
-        const option = project.options.find(o => o.name === optionName);
-        const post = option.posts.find(p => p.id == postId);
-        
-        if (post) {
-            res.render('modal', { post: post, project: project, option: option });
-        } else {
-            res.redirect(`/project/${projectId}/${optionName}`);
-        }
-    } else {
-        res.redirect('/');
-    }
-});
-
-app.post('/delete/:postId', (req, res) => {
-    const { postId } = req.params;
-    let postToDelete;
-    
-    for (let project of projects) {
-        for (let option of project.options) {
-            const postIndex = option.posts.findIndex(p => p.id == postId);
-            if (postIndex !== -1) {
-                postToDelete = option.posts.splice(postIndex, 1)[0];
-                return res.redirect(`/project/${project.id}/${option.name}`);
-            }
-        }
-    }
-
-    res.redirect('/');
-});
-
 // Logout korisnika
 app.get('/logout', (req, res) => {
     req.session.destroy(() => {
@@ -272,10 +185,5 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Pokretanje servera
-// Pokretanje servera
-app.listen(port, () => {
-    console.log(`Server radi na http://localhost:${port}`);
-});
-
-    
+// Eksportuj server kao serverless funkciju
+export default app;
