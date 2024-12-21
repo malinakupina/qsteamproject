@@ -4,11 +4,29 @@ import session from 'express-session';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
-import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
+import fs from 'fs';
 import cookie from 'cookie';
+import Redis from 'ioredis';
+import connectRedis from 'connect-redis';
 
 const app = express();
 const port = 3000;
+
+const RedisStore = connectRedis(session);
+const redisClient = new Redis({
+  host: 'localhost',  // Za lokalnu instancu Redis-a
+  port: 6379,         // Podrazumevani port
+});
+
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true },
+  })
+);
 
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -17,44 +35,14 @@ const __dirname = path.dirname(__filename);
 // Set up multer for image upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, 'public', 'uploads'));  // Ensure the images are stored here
+        cb(null, path.join(__dirname, 'public', 'uploads'));  // Osiguraj da se slike čuvaju ovde
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
+        cb(null, Date.now() + path.extname(file.originalname));  // Unikatni naziv fajla baziran na vremenu
     }
 });
 
 const upload = multer({ storage: storage });
-
-
-export default function handler(req, res) {
-    if (req.method === 'POST') {
-      // Pretpostavljamo da je korisnik uspešno prijavljen
-      res.setHeader('Set-Cookie', cookie.serialize('token', String('your-session-token'), {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',  // Koristi HTTPS u produkciji
-        maxAge: 60 * 60 * 24, // Sesija traje 24h
-        path: '/',  // Dostupno svuda na sajtu
-      }));
-      
-      res.status(200).json({ message: 'Login success' });
-    } else {
-      res.status(405).json({ error: 'Method not allowed' });
-    }
-
-    const cookies = cookie.parse(req.headers.cookie || '');
-    const token = cookies.token;
-
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    // Nastavite sa obradom zahteva jer je korisnik ulogovan
-    res.status(200).json({ message: 'Authorized' });
-
-
-  }
-
 
 // Dummy korisnici
 const users = [
@@ -67,18 +55,12 @@ let projects = [];
 
 // Popunjavanje projekata iz JSON fajla
 const projectsFilePath = path.join(__dirname, 'projekat.json');
-
-// Proveravamo da li fajl postoji
 if (fs.existsSync(projectsFilePath)) {
     const data = fs.readFileSync(projectsFilePath, 'utf-8');
     projects = JSON.parse(data);
-} else {
-    // Ako fajl ne postoji, pravimo prazan niz projekata
-    projects = [];
 }
-// kraj popunjavanja
 
-// Middleware
+// Middleware za sesiju
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
@@ -101,16 +83,15 @@ app.use((req, res, next) => {
 // Middleware za proveru prijavljenosti korisnika
 function ensureAuthenticated(req, res, next) {
     if (req.session.user) {
-        return next();  // Ako je korisnik prijavljen, nastavi dalje
+        return next();
     } else {
-        res.redirect('/login');  // Ako nije prijavljen, preusmeri na login
+        res.redirect('/login');
     }
 }
 
-// Dodaj ovu middleware funkciju na svaku rutu gde je korisnik obavezan da bude prijavljen
-app.get('/profile', ensureAuthenticated, (req, res) => {
-    const additionalData = { title: 'Profile Page' };
-    res.render('profile', { ...additionalData });
+// Rute
+app.get('/', (req, res) => {
+    res.render('index');
 });
 
 // Ruta za login stranicu
@@ -453,5 +434,3 @@ app.get('/logout', (req, res) => {
 app.listen(port, () => {
     console.log(`Server radi na http://localhost:${port}`);
 });
-
-

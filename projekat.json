@@ -829,5 +829,33 @@
       }
     ],
     "posts": []
+  },
+  {
+    "id": 32,
+    "name": "Zvizgo",
+    "description": "Zvizgan",
+    "options": [
+      {
+        "name": "protokol",
+        "posts": []
+      },
+      {
+        "name": "reklamacija_kupca",
+        "posts": []
+      },
+      {
+        "name": "vizuelna_kontrola",
+        "posts": []
+      },
+      {
+        "name": "povezivanje_na_tester",
+        "posts": []
+      },
+      {
+        "name": "testiranje",
+        "posts": []
+      }
+    ],
+    "posts": []
   }
 ]
