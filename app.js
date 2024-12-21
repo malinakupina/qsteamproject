@@ -1,3 +1,6 @@
+try {
+
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
@@ -273,3 +276,8 @@ app.get('/logout', (req, res) => {
 app.listen(port, () => {
     console.log(`Server radi na http://localhost:${port}`);
 });
+}catch (error) {
+    console.error('Greška:', error);
+    return res.status(500).json({ message: 'Nešto je pošlo po zlu' });
+}
+    
