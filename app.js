@@ -5,7 +5,7 @@ import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
-
+import cookie from 'cookie';
 
 const app = express();
 const port = 3000;
@@ -25,6 +25,36 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+
+export default function handler(req, res) {
+    if (req.method === 'POST') {
+      // Pretpostavljamo da je korisnik uspešno prijavljen
+      res.setHeader('Set-Cookie', cookie.serialize('token', String('your-session-token'), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',  // Koristi HTTPS u produkciji
+        maxAge: 60 * 60 * 24, // Sesija traje 24h
+        path: '/',  // Dostupno svuda na sajtu
+      }));
+      
+      res.status(200).json({ message: 'Login success' });
+    } else {
+      res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const cookies = cookie.parse(req.headers.cookie || '');
+    const token = cookies.token;
+
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Nastavite sa obradom zahteva jer je korisnik ulogovan
+    res.status(200).json({ message: 'Authorized' });
+
+
+  }
+
 
 // Dummy korisnici
 const users = [
