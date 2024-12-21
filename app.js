@@ -17,7 +17,7 @@ const RedisStore = connectRedis(session);
 const redisClient = new Redis({
   host: process.env.REDIS_HOST, // Koristi REDIS_HOST varijablu
   port: process.env.REDIS_PORT, // Koristi REDIS_PORT varijablu
-  password: process.env.REDIS_PASSWORD, // Ako je potrebno, koristi REDIS_PASSWORD
+  
 });
 
 app.use(
