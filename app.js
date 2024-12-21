@@ -12,26 +12,7 @@ import connectRedis from 'connect-redis';
 const app = express();
 const port = 3000;
 
-// Inicijalizacija Redis-a koristeći environment varijable
-const RedisStore = connectRedis(session);
-const redisClient = new Redis({
-  host: process.env.REDIS_HOST, // Koristi REDIS_HOST varijablu
-  port: process.env.REDIS_PORT, // Koristi REDIS_PORT varijablu
-  
-});
 
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient }), // Postavljanje RedisStore za čuvanje sesija
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === 'production', // Obavezno koristi secure za produkciju
-      httpOnly: true, // Postavljanje HTTPOnly
-    },
-  })
-);
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
