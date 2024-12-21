@@ -4,8 +4,14 @@
     {
       "src": "app.js",
       "use": "@vercel/node"
-    }
+    },
+    { "src": "app/api/login.js", "use": "@vercel/node" }
   ],
+  
+    
+      
+    
+  
   "routes": [
     {
       "src": "/(.*)",
