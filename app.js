@@ -6,9 +6,7 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
-
-import { default as RedisStore } from 'connect-redis';
-
+import { default as RedisStore } from 'connect-redis';  // Correct import
 
 import { createClient } from 'redis';
 
@@ -33,6 +31,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: false }  // Ako koristiš HTTPS, postavi `secure: true`
 }));
+
+// Rest of the code...
+
 
 // Rest of the code...
 
