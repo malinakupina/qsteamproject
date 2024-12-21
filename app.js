@@ -6,9 +6,11 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
-import { default as RedisStore } from 'connect-redis';  // Correct import
+
 
 import { createClient } from 'redis';
+
+const RedisStore = require('connect-redis');  /
 
 const app = express();
 const port = 3000;
