@@ -10,7 +10,7 @@ import cookie from 'cookie';
 
 import { createClient } from 'redis';
 
-const RedisStore = require('connect-redis');  /
+const RedisStore = require('connect-redis');  
 
 const app = express();
 const port = 3000;
