@@ -2,10 +2,10 @@
   "name": "qsteamproject",
   "version": "1.0.0",
   "main": "app.js",
-  "type": "module",  // Omogućava korišćenje ES Module (import/export)
+  "type": "module", 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "vercel dev"  // Dodato za pokretanje lokalnog servera
+    "start": "vercel dev"  
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,7 @@
     "fs": "^0.0.1-security",
     "multer": "^1.4.5-lts.1",
     "session": "^0.1.0",
-    "@vercel/node": "^2.0.0"  // Dodato za podršku serverless funkcijama na Vercelu
+    "@vercel/node": "^2.0.0"  
   }
 }
 
