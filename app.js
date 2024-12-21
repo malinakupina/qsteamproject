@@ -6,8 +6,7 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import cookie from 'cookie';
-import Redis from 'ioredis';
-import connectRedis from 'connect-redis';
+
 
 const app = express();
 const port = 3000;
