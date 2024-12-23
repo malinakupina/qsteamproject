@@ -6,9 +6,14 @@ import multer from 'multer';
 import { fileURLToPath } from 'url';
 import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-// Povezivanje sa MongoDB
-mongoose.connect('your-mongodb-uri', {
+
+// Učitavanje vrednosti iz .env fajla
+dotenv.config();
+
+// Povezivanje sa MongoDB koristeći vrednost iz .env fajla
+mongoose.connect(process.env.DB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -16,6 +21,8 @@ mongoose.connect('your-mongodb-uri', {
 }).catch((error) => {
     console.error('Greška pri povezivanju sa MongoDB:', error);
 });
+
+
 
 // Definicija modela za Post, Option i Project
 const postSchema = new mongoose.Schema({
