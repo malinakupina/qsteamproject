@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb'; // Uključi ovo ako koristiš MongoDB bez Mongoose
-import Project from './models/Project.js';  // Import Project model
+//import Project from './models/Project.js';  // Import Project model
 
 // Učitavanje vrednosti iz .env fajla
 dotenv.config();
@@ -21,6 +21,27 @@ mongoose.connect(dbURI, {
 })
 .then(() => console.log('Povezan sa MongoDB bazom'))
 .catch((err) => console.log('Greška pri povezivanju sa MongoDB bazom:', err));
+
+// Definicija modela za Post, Option i Project
+const postSchema = new mongoose.Schema({
+    title: String,
+    content: String,
+    imageUrl: String,
+    date: { type: Date, default: Date.now }
+});
+
+const optionSchema = new mongoose.Schema({
+    name: String,
+    posts: [postSchema]
+});
+
+const projectSchema = new mongoose.Schema({
+    name: String,
+    description: String,
+    options: [optionSchema]
+});
+
+const Project = mongoose.model('Project', projectSchema);
 
 const app = express();
 const port = 3000;
