@@ -4,11 +4,9 @@ import session from 'express-session';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
-import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
-
+import { ObjectId } from 'mongodb'; // Uključi ovo ako koristiš MongoDB bez Mongoose
 
 // Učitavanje vrednosti iz .env fajla
 dotenv.config();
@@ -23,38 +21,6 @@ mongoose.connect(dbURI, {
 .then(() => console.log('Povezan sa MongoDB bazom'))
 .catch((err) => console.log('Greška pri povezivanju sa MongoDB bazom:', err));
 
-// Ostale Express postavke, rute, middleware, itd.
-app.use(express.json());  // Za parsiranje JSON-a
-app.use(express.urlencoded({ extended: true }));  // Za parsiranje URL encoded podataka
-
-// Tvoje rute i ostale funkcionalnosti ovde
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-
-
-// Definicija modela za Post, Option i Project
-const postSchema = new mongoose.Schema({
-    title: String,
-    content: String,
-    imageUrl: String,
-    date: { type: Date, default: Date.now }
-});
-
-const optionSchema = new mongoose.Schema({
-    name: String,
-    posts: [postSchema]
-});
-
-const projectSchema = new mongoose.Schema({
-    name: String,
-    description: String,
-    options: [optionSchema]
-});
-
-const Project = mongoose.model('Project', projectSchema);
-
 const app = express();
 const port = 3000;
 
@@ -64,12 +30,12 @@ const __dirname = path.dirname(__filename);
 
 // Set up multer for image upload
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, 'public', 'uploads'));  // Ensure the images are stored here
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
-    }
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, 'public', 'uploads'));  // Ensure the images are stored here
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
+  }
 });
 
 const upload = multer({ storage: storage });
