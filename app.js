@@ -4,23 +4,26 @@ import session from 'express-session';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
+import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { ObjectId } from 'mongodb'; // Uključi ovo ako koristiš MongoDB bez Mongoose
-import Project from './models/Project.js';  // Import Project model
+import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
+
 
 // Učitavanje vrednosti iz .env fajla
 dotenv.config();
 
 // Povezivanje sa MongoDB koristeći vrednost iz .env fajla
-const dbURI = process.env.MONGODB_URI; // Uzimanje connection stringa iz .env fajla
+mongoose.connect(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Povezivanje sa MongoDB uspesno!');
+}).catch((error) => {
+    console.error('Greška pri povezivanju sa MongoDB:', error);
+});
 
-mongoose.connect(dbURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('Povezan sa MongoDB bazom'))
-.catch((err) => console.log('Greška pri povezivanju sa MongoDB bazom:', err));
+
 
 // Definicija modela za Post, Option i Project
 const postSchema = new mongoose.Schema({
@@ -41,7 +44,7 @@ const projectSchema = new mongoose.Schema({
     options: [optionSchema]
 });
 
-//const Project = mongoose.model('Project', projectSchema);
+const Project = mongoose.model('Project', projectSchema);
 
 const app = express();
 const port = 3000;
@@ -52,12 +55,12 @@ const __dirname = path.dirname(__filename);
 
 // Set up multer for image upload
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'public', 'uploads'));  // Ensure the images are stored here
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
-  }
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, 'public', 'uploads'));  // Ensure the images are stored here
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
+    }
 });
 
 const upload = multer({ storage: storage });
@@ -72,19 +75,16 @@ const users = [
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true
+}));
 
 // Podesavanje view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
-
-
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Postavite na true ako koristite HTTPS
-}));
 
 // Middleware da bi se user prosledio u svaki ejs fajl
 app.use((req, res, next) => {
@@ -100,9 +100,6 @@ function ensureAuthenticated(req, res, next) {
         res.redirect('/login');  // Ako nije prijavljen, preusmeri na login
     }
 }
-
-
-
 
 // Dodaj ovu middleware funkciju na svaku rutu gde je korisnik obavezan da bude prijavljen
 app.get('/profile', ensureAuthenticated, (req, res) => {
