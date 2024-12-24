@@ -15,14 +15,10 @@ import MongoStore from 'connect-mongo';
 dotenv.config();
 
 // Povezivanje sa MongoDB koristeći vrednost iz .env fajla
-mongoose.connect(process.env.DB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Povezivanje sa MongoDB uspesno!');
-}).catch((error) => {
-    console.error('Greška pri povezivanju sa MongoDB:', error);
-});
+mongoose.connect(dbURI)
+.then(() => console.log('Povezan sa MongoDB bazom'))
+.catch((err) => console.log('Greška pri povezivanju sa MongoDB bazom:', err));
+
 
 
 
