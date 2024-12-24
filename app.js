@@ -50,16 +50,19 @@ const users = [
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(session({
-    secret: 'secret-key',
-    resave: false,
-    saveUninitialized: true
-}));
 
 // Podesavanje view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+const session = require('express-session');
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Postavite na true ako koristite HTTPS
+}));
 
 // Middleware da bi se user prosledio u svaki ejs fajl
 app.use((req, res, next) => {
@@ -76,14 +79,7 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
-const session = require('express-session');
 
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Postavite na true ako koristite HTTPS
-}));
 
 
 // Dodaj ovu middleware funkciju na svaku rutu gde je korisnik obavezan da bude prijavljen
