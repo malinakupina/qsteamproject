@@ -15,10 +15,14 @@ import MongoStore from 'connect-mongo';
 dotenv.config();
 
 // Povezivanje sa MongoDB koristeći vrednost iz .env fajla
-mongoose.connect(dbURI)
-.then(() => console.log('Povezan sa MongoDB bazom'))
-.catch((err) => console.log('Greška pri povezivanju sa MongoDB bazom:', err));
-
+mongoose.connect(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Povezivanje sa MongoDB uspesno!');
+}).catch((error) => {
+    console.error('Greška pri povezivanju sa MongoDB:', error);
+});
 
 
 
@@ -77,7 +81,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-    cookie: { secure: false }  // Set to true in production if using HTTPS
+    cookie: { secure: true }  // Set to true in production if using HTTPS
 }));
 
 // Podesavanje view engine
