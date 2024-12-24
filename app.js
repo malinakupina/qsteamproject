@@ -8,6 +8,7 @@ import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
+import MongoStore from 'connect-mongo';
 
 
 // Učitavanje vrednosti iz .env fajla
@@ -76,9 +77,11 @@ const users = [
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'secret-key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: { secure: false }  // Set to true in production if using HTTPS
 }));
 
 // Podesavanje view engine
