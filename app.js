@@ -101,6 +101,16 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
+const session = require('express-session');
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Postavite na true ako koristite HTTPS
+}));
+
+
 // Dodaj ovu middleware funkciju na svaku rutu gde je korisnik obavezan da bude prijavljen
 app.get('/profile', ensureAuthenticated, (req, res) => {
     const additionalData = { title: 'Profile Page' };
