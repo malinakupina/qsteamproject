@@ -81,15 +81,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
+const MongoStore = connectMongo(session);
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
+    store: new MongoStore({
+      mongoUrl: process.env.MONGODB_URI,
+    }),
     resave: false,
     saveUninitialized: true,
     cookie: {
-      httpOnly: true,      // Ne može se pristupiti iz JavaScript-a
-      secure: process.env.NODE_ENV === 'production', // Samo preko HTTPS-a
-      sameSite: 'strict',  // Ili 'lax' zavisno od slučaja
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
     },
   })
 );
