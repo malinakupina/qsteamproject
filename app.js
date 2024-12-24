@@ -14,13 +14,22 @@ import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez M
 dotenv.config();
 
 // Povezivanje sa MongoDB koristeći vrednost iz .env fajla
-mongoose.connect(process.env.DB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Povezivanje sa MongoDB uspesno!');
-}).catch((error) => {
-    console.error('Greška pri povezivanju sa MongoDB:', error);
+const dbURI = process.env.MONGODB_URI; // Uzimanje connection stringa iz .env fajla
+
+mongoose.connect(dbURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Povezan sa MongoDB bazom'))
+.catch((err) => console.log('Greška pri povezivanju sa MongoDB bazom:', err));
+
+// Ostale Express postavke, rute, middleware, itd.
+app.use(express.json());  // Za parsiranje JSON-a
+app.use(express.urlencoded({ extended: true }));  // Za parsiranje URL encoded podataka
+
+// Tvoje rute i ostale funkcionalnosti ovde
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
 
 
