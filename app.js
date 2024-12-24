@@ -82,33 +82,40 @@ const users = [
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true
+}));
+
+
 
 //const MongoStore = connectMongo(session);
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    store: new MongoStore({
-      mongoUrl: process.env.MONGODB_URI,
-    }),
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    },
-  })
-);
-
 // app.use(
-//   cors({
-//     origin: 'https://qsteamproject.vercel.app', // Dozvoli samo frontend sa ovog URL-a
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Dozvoli određene HTTP metode
-//     allowedHeaders: ['Content-Type', 'Authorization'], // Dozvoli određene zaglavlja
-//     credentials: true,  // Omogući kolačiće (ako koristiš sesije)
+//   session({
+//     secret: process.env.SESSION_SECRET,
+//     store: new MongoStore({
+//       mongoUrl: process.env.MONGODB_URI,
+//     }),
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === 'production',
+//       sameSite: 'strict',
+//     },
 //   })
 // );
+
+app.use(
+  cors({
+    origin: 'https://qsteamproject.vercel.app', // Dozvoli samo frontend sa ovog URL-a
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Dozvoli određene HTTP metode
+    allowedHeaders: ['Content-Type', 'Authorization'], // Dozvoli određene zaglavlja
+    credentials: true,  // Omogući kolačiće (ako koristiš sesije)
+  })
+);
 
 // Podesavanje view engine
 app.set('view engine', 'ejs');
