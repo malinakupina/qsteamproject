@@ -8,6 +8,8 @@ import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
+import connectMongo from 'connect-mongo';
+import cors from 'cors';
 
 
 // Učitavanje vrednosti iz .env fajla
@@ -96,6 +98,13 @@ app.use(
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     },
+  })
+);
+
+app.use(
+  cors({
+    origin: 'https://qsteamproject.vercel.app', // Dozvoli tvoj frontend domenu
+    credentials: true, // Dozvoli kolačiće
   })
 );
 
