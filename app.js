@@ -1,169 +1,222 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const User = require('./models/User');
-const Project = require('./models/Project');
-const Option = require('./models/Option');
-const app = express();
+import express from 'express';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import path from 'path';
+import multer from 'multer';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import { ObjectId } from 'mongodb'; 
+import MongoStore from 'connect-mongo';
 
-// .env fajl
-require('dotenv').config();
+// Učitavanje vrednosti iz .env fajla
+dotenv.config();
 
-// Povezivanje na MongoDB
+// Povezivanje sa MongoDB
 mongoose.connect(process.env.DB_URI, {
-    useUnifiedTopology: true,
-})
-    .then(() => console.log('Povezivanje sa bazom je uspelo!'))
-    .catch((err) => console.log('Greška pri povezivanju sa bazom:', err));
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Povezivanje sa MongoDB uspesno!');
+}).catch((error) => {
+    console.error('Greška pri povezivanju sa MongoDB:', error);
+});
 
-// Middleware za sesiju
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-    cookie: { secure: process.env.NODE_ENV === 'production' }  // Ako koristiš HTTPS u produkciji
-}));
+// Definicija modela za Post, Option i Project
+const postSchema = new mongoose.Schema({
+    title: String,
+    content: String,
+    imageUrl: String,
+    date: { type: Date, default: Date.now }
+});
 
-// Postavljanje EJS kao templating engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+const optionSchema = new mongoose.Schema({
+    name: String,
+    posts: [postSchema]
+});
 
-// Postavljanje statičkih fajlova
-app.use(express.static(path.join(__dirname, 'public')));
+const projectSchema = new mongoose.Schema({
+    name: String,
+    description: String,
+    options: [optionSchema]
+});
 
-// Middleware za parsiranje tela zahteva
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const Project = mongoose.model('Project', projectSchema);
 
-// Provera da li je korisnik prijavljen
-function ensureAuthenticated(req, res, next) {
-    if (req.session.user) {
-        return next();
-    }
-    res.redirect('/login');
-}
+// Podesavanje Express aplikacije
+const app = express();
+const port = 3000;
 
-// Multer konfiguracija za upload slika
-const uploadDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Inicijalizacija za ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// Set up multer for image upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, uploadDir);
+        cb(null, path.join(__dirname, 'public', 'uploads'));  // Ensure the images are stored here
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
     }
 });
 
 const upload = multer({ storage: storage });
 
-// Ruta za prijavu
-app.get('/login', (req, res) => {
-    res.render('login');
+// Dummy korisnici za login
+const users = [
+    { username: 'QS09', password: 'QSTeam2025' },
+    { username: 'user2', password: 'password2' },
+    { username: 'user3', password: 'password3' }
+];
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.DB_URI }),
+    cookie: { secure: false }  // Postaviti na true ako koristite HTTPS u produkciji
+}));
+
+// Podesavanje view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware da bi se user prosledio u svaki ejs fajl
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;  // Prosleđujemo user iz sesije
+    next();
 });
 
-// Ruta za autentifikaciju
+// Middleware za proveru prijavljenosti korisnika
+function ensureAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return next();  // Ako je korisnik prijavljen, nastavi dalje
+    } else {
+        res.redirect('/login');  // Ako nije prijavljen, preusmeri na login
+    }
+}
+
+// Ruta za login
+app.get('/login', (req, res) => {
+    res.render('login', { message: '' });
+});
+
+// Ruta za obradu POST zahteva za login
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-
-    User.findOne({ username: username }, (err, user) => {
-        if (err || !user || user.password !== password) {
-            return res.render('login', { error: 'Neispravno korisničko ime ili lozinka' });
-        }
-        req.session.user = user;
-        res.redirect('/');
-    });
+    const foundUser = users.find(user => user.username === username && user.password === password);
+    if (foundUser) {
+        req.session.user = { username };
+        res.redirect('/');  // Preusmeravanje na početnu stranicu
+    } else {
+        res.render('login', { message: 'Neispravni podaci!' });
+    }
 });
 
-// Ruta za odjavu
+// Početna stranica
+app.get('/', (req, res) => {
+    res.render('index');
+});
+
+// Kreiranje projekta
+app.get('/create-project', ensureAuthenticated, (req, res) => {
+    res.render('create-project', { error: null });
+});
+
+app.post('/create-project', async (req, res) => {
+    const { name, description, options } = req.body;
+
+    let optionObjects = options.map(optionName => ({
+        name: optionName,
+        posts: []
+    }));
+
+    // Provera da li projekat sa istim imenom već postoji
+    const projectExists = await Project.findOne({ name: name });
+
+    if (projectExists) {
+        return res.render('projects', {
+            message: 'Projekat sa ovim imenom već postoji!'
+        });
+    }
+
+    // Kreiranje novog projekta
+    const newProject = new Project({
+        name,
+        description,
+        options: optionObjects
+    });
+
+    await newProject.save();
+    res.redirect('/projects');
+});
+
+// Projekti
+app.get('/projects', ensureAuthenticated, async (req, res) => {
+    const projects = await Project.find();
+    res.render('projects', { projects });
+});
+
+// Detalji o projektu
+app.get('/project/:id', ensureAuthenticated, async (req, res) => {
+    const project = await Project.findById(req.params.id);
+    if (project) {
+        res.render('project-details', { project });
+    } else {
+        res.status(404).send('Projekt nije pronađen.');
+    }
+});
+
+// Ruta za upload postova
+app.get('/project/:projectId/:optionName/create-post', ensureAuthenticated, async (req, res) => {
+    const { projectId, optionName } = req.params;
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).send('Projekt nije pronađen');
+
+    const option = project.options.find(o => o.name === optionName);
+    if (!option) return res.status(404).send('Opcija nije pronađena');
+
+    res.render('option-posts', { project, option });
+});
+
+app.post('/project/:projectId/option/:optionName/create-post', upload.single('imageUrl'), async (req, res) => {
+    const { projectId, optionName } = req.params;
+    const { title, content } = req.body;
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).send('Projekt nije pronađen');
+
+    const option = project.options.find(o => o.name === optionName);
+    if (!option) return res.status(404).send('Opcija nije pronađena');
+
+    const newPost = {
+        title,
+        content,
+        imageUrl,
+        date: new Date()
+    };
+
+    option.posts.push(newPost);
+    await project.save();
+
+    res.redirect(`/project/${project.id}/${option.name}`);
+});
+
+// Logout korisnika
 app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.redirect('/');
-        }
-        res.clearCookie('connect.sid');
+    req.session.destroy(() => {
         res.redirect('/login');
     });
 });
 
-// Ruta za početnu stranicu
-app.get('/', ensureAuthenticated, (req, res) => {
-    res.render('index', { user: req.session.user });
-});
-
-// Ruta za dodavanje novog projekta
-app.get('/project/add', ensureAuthenticated, (req, res) => {
-    res.render('add-project');
-});
-
-app.post('/project/add', ensureAuthenticated, (req, res) => {
-    const { title, description } = req.body;
-
-    const newProject = new Project({
-        title,
-        description,
-        userId: req.session.user._id
-    });
-
-    newProject.save()
-        .then(() => res.redirect('/'))
-        .catch((err) => res.render('add-project', { error: 'Greška pri dodavanju projekta' }));
-});
-
-// Ruta za upload slike za projekat
-app.post('/project/:id/upload', ensureAuthenticated, upload.single('image'), (req, res) => {
-    const projectId = req.params.id;
-    const imageUrl = `/uploads/${req.file.filename}`;
-
-    Project.findByIdAndUpdate(projectId, { imageUrl }, { new: true })
-        .then(() => res.redirect(`/project/${projectId}`))
-        .catch((err) => res.redirect('/'));
-});
-
-// Ruta za prikaz projekata
-app.get('/project/:id', ensureAuthenticated, (req, res) => {
-    const projectId = req.params.id;
-
-    Project.findById(projectId).populate('userId').exec((err, project) => {
-        if (err || !project) {
-            return res.redirect('/');
-        }
-
-        res.render('project', { project });
-    });
-});
-
-// Ruta za dodavanje opcija unutar projekta
-app.get('/project/:projectId/option/add', ensureAuthenticated, (req, res) => {
-    const projectId = req.params.projectId;
-
-    res.render('add-option', { projectId });
-});
-
-app.post('/project/:projectId/option/add', ensureAuthenticated, (req, res) => {
-    const projectId = req.params.projectId;
-    const { optionTitle } = req.body;
-
-    const newOption = new Option({
-        title: optionTitle,
-        projectId: projectId
-    });
-
-    newOption.save()
-        .then(() => res.redirect(`/project/${projectId}`))
-        .catch((err) => res.render('add-option', { error: 'Greška pri dodavanju opcije', projectId }));
-});
-
 // Pokretanje servera
-const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Server je pokrenut na portu ${port}`);
+    console.log(`Server radi na http://localhost:${port}`);
 });
