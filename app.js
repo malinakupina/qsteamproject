@@ -54,6 +54,11 @@ const port = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const uploadDir = path.join(__dirname, 'public', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 // Set up multer for image upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -66,6 +71,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+
+
 // Dummy korisnici
 const users = [
     { username: 'QS09', password: 'QSTeam2025' },
@@ -76,13 +84,15 @@ const users = [
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-    cookie: { secure: true }  // Set to true in production if using HTTPS
+    cookie: { secure: process.env.NODE_ENV === 'production' }  // Ovo treba biti true ako koristiš HTTPS
 }));
+
 
 // Podesavanje view engine
 app.set('view engine', 'ejs');
