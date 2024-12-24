@@ -98,12 +98,12 @@ app.use(
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({
-      mongoUrl: process.env.MONGODB_URI, // URI za tvoju MongoDB bazu podataka
+      mongoUrl: process.env.MONGODB_URI, // URI tvoje MongoDB baze podataka
       ttl: 14 * 24 * 60 * 60,  // Sesija ističe za 14 dana
     }),
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Postavi secure: true za produkciju
+      secure: process.env.NODE_ENV === 'production', // Samo za HTTPS u produkciji
       sameSite: 'strict',
     },
   })
