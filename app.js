@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb'; // Uključi ovo ako koristiš MongoDB bez Mongoose
+import Project from './models/Project';  // Import Project model
 
 // Učitavanje vrednosti iz .env fajla
 dotenv.config();
