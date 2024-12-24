@@ -41,7 +41,7 @@ const projectSchema = new mongoose.Schema({
     options: [optionSchema]
 });
 
-const Project = mongoose.model('Project', projectSchema);
+//const Project = mongoose.model('Project', projectSchema);
 
 const app = express();
 const port = 3000;
