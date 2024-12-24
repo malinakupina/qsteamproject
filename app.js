@@ -101,14 +101,14 @@ app.use(
   })
 );
 
-app.use(
-  cors({
-    origin: 'https://qsteamproject.vercel.app', // Dozvoli samo frontend sa ovog URL-a
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Dozvoli određene HTTP metode
-    allowedHeaders: ['Content-Type', 'Authorization'], // Dozvoli određene zaglavlja
-    credentials: true,  // Omogući kolačiće (ako koristiš sesije)
-  })
-);
+// app.use(
+//   cors({
+//     origin: 'https://qsteamproject.vercel.app', // Dozvoli samo frontend sa ovog URL-a
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Dozvoli određene HTTP metode
+//     allowedHeaders: ['Content-Type', 'Authorization'], // Dozvoli određene zaglavlja
+//     credentials: true,  // Omogući kolačiće (ako koristiš sesije)
+//   })
+// );
 
 // Podesavanje view engine
 app.set('view engine', 'ejs');
