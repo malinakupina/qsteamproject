@@ -16,7 +16,7 @@ dotenv.config();
 
 // Povezivanje sa MongoDB koristeći vrednost iz .env fajla
 mongoose.connect(process.env.DB_URI, {
-    useNewUrlParser: true,
+    
     useUnifiedTopology: true
 }).then(() => {
     console.log('Povezivanje sa MongoDB uspesno!');
