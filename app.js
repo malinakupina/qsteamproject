@@ -83,7 +83,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-const MongoStore = connectMongo(session);
+//const MongoStore = connectMongo(session);
 
 app.use(
   session({
