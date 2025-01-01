@@ -9,7 +9,8 @@
     <div class="modal" style="display: block;">
         <div class="modal-content">
             <h3>Are you sure you want to delete this project?</h3>
-            <form action="/delete/<%= post.id %>" method="POST">
+            <form action="/project/<%= project._id %>/option/<%= option.name %>/delete/<%= post._id %>" method="POST">
+
                 <div class="modal-actions">
                     <button type="submit" class="btn btn-confirm">Yes, Delete</button>
                     <a href="/project/<%= project.id %>/<%= option.name %>" class="btn btn-cancel">Cancel</a>

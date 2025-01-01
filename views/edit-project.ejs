@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-<h3>Postojeće Opcije: Projekat <%=project.name%></h3>
+<h3>Postojeće Opcije: Projekat <%= project.name %></h3>
 <ul>
     <% project.options.forEach(option => { %>
         <li><%= option.name %></li>
@@ -9,6 +9,7 @@
 
 <h3>Dodaj nove opcije:</h3>
 <form action="/project/<%= project.id %>/edit" method="POST">
+
     <!-- Check-box opcije koje nisu zauzete -->
     <div class="checkbox-options">
         <% ['povezivanje_na_tester', 'testiranje', 'hv_test', 'spisak_gresaka'].forEach(option => { %>
@@ -21,7 +22,8 @@
     </div>
 
     <h4>Nova Opcija:</h4>
-    <input type="text" name="newOption" autocomplete="off" placeholder="Unesite naziv nove opcije (ako želite više opcija, odvojite ih zarezom)"><br>
+    <!-- Input polje za unos novih opcija, odvojenih zarezom -->
+    <input type="text" id="newOption" name="newOption" autocomplete="off" placeholder="Unesite naziv nove opcije (ako želite više opcija, odvojite ih zarezom)"><br>
     <p class="hint">Ako želite da dodate više opcija, jednostavno unesite nazive opcija odvojene zarezom.</p>
 
     <button type="submit" class="btn">Dodaj Opcije</button>

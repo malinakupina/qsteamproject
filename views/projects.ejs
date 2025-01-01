@@ -32,11 +32,16 @@
     <h2 class="projects-title">Trenutno Kreirani Projekti</h2>
     <ul class="post-list">
         <% projects.forEach(project => { %>
-            <li class="post-item">
+            <li class="post-item">               
+                 
                 <div class="project-item-container">
+                    <button id="deleteButton" class="btn-edit-project" data-id="<%= project.id %>">Delete</button>
+
+                                      
                     <a href="/project/<%= project.id %>" class="project-link"><%= project.name %></a>
                     <a href="/edit-project/<%= project.id %>" class="btn-edit-project">Edit</a>
                 </div>
+                
             </li>
         <% }); %>
     </ul>
@@ -46,50 +51,30 @@
 
 <%- include('partials/footer') %>
 
-<!-- Modalni dijalog - Prikazujemo samo ako postoji poruka -->
-<% if (typeof message !== 'undefined' && message) { %>  <!-- Provera da li message postoji -->
-    <div id="warningModal" class="modal show"> <!-- Dodajemo class 'show' ako postoji poruka -->
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Upozorenje</h3>
-            <p><%= message %></p> <!-- Prikazivanje poruke -->
-            <button class="btn-close" onclick="closeModal()">Zatvori</button>
-        </div>
-    </div>
-<% } %>
-
-<!-- Modal script -->
 <script>
-    var modal = document.getElementById("warningModal");
-    var span = document.getElementsByClassName("close")[0];
+// Kada korisnik klikne na dugme za brisanje
+document.getElementById('deleteButton').addEventListener('click', function() {
+    const projectId = this.getAttribute('data-id');  // Pretpostavljamo da 'data-id' sadrži project ID
 
-    // Funkcija za prikazivanje modala
-    function showModal() {
-        modal.style.display = "block";
-    }
-
-    // Funkcija za zatvaranje modala
-    function closeModal() {
-        modal.style.display = "none";
-    }
-
-    // Klik na "x" zatvara modal
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // Ako korisnik klikne izvan modala, zatvori ga
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+    fetch('/delete-project/' + projectId, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        // Ako odgovor nije uspešan, ispisujemo grešku
+        if (!response.ok) {
+            throw new Error('Greška na serveru: ' + response.status);
         }
-    }
-
-    // Ako postoji 'show' klasa na modal, prikazujemo modal
-    if (modal.classList.contains("show")) {
-        showModal();
-    }
+        return response.json();  // Ako je odgovor OK, pretvori ga u JSON
+    })
+    .then(data => {
+        console.log(data);  // Ovde koristiš odgovor servera
+        alert('Projekat obrisan!');
+        window.location.href = '/projects';  // Preusmeravanje na listu projekata
+    })
+    .catch(error => {
+        console.error('Došlo je do greške:', error);
+        alert('Greška pri brisanju projekta');
+    });
+});
 </script>
-
-<!-- Uključi stilove za modal -->
- <!-- Uključi stilove za modal -->
+ 

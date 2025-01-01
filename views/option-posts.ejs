@@ -1,9 +1,6 @@
 <%- include("partials/header.ejs") %>
 
 
-
-
-
 <!-- Forma za kreiranje novog posta za ovu opciju -->
 <h3>Kreiranje  Posta za Opciju: <span><%= option.name %></span></h3>
 <!-- Forma za kreiranje novog posta za ovu opciju -->
@@ -24,6 +21,15 @@
     </div>
     <button type="submit" class="btn">Kreiraj Post</button>
 </form>
+<% if (message && message.length > 0) { %>
+    <p><%= message %></p>
+<% } %>
 
 
 <%- include("partials/footer.ejs") %>
+
+
+
+
+
+
