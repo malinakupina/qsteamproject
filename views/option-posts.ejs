@@ -1,10 +1,6 @@
-<%- include("partials/header.ejs") %>
+<%- include("partials/editor_header.ejs") %>
 
-
-<!-- Forma za kreiranje novog posta za ovu opciju -->
-<h3>Kreiranje  Posta za Opciju: <span><%= option.name %></span></h3>
-<!-- Forma za kreiranje novog posta za ovu opciju -->
-
+<h3>Kreiranje Posta za Opciju: <span><%= option.name %></span></h3>
 
 <form action="/project/<%= project.id %>/option/<%= option.name %>/create-post" method="POST" enctype="multipart/form-data">
     <div class="form-group">
@@ -21,15 +17,24 @@
     </div>
     <button type="submit" class="btn">Kreiraj Post</button>
 </form>
+
 <% if (message && message.length > 0) { %>
     <p><%= message %></p>
 <% } %>
 
+<!-- script that include tiny Mousue doe field description -->
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+
+<script>
+    var quill = new Quill('#content', {
+      theme: 'snow'
+    });    
+  
+
+</script>
+
+
 
 <%- include("partials/footer.ejs") %>
-
-
-
-
-
-

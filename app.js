@@ -10,6 +10,10 @@ import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
 import methodOverride from 'method-override';
 import bcrypt from 'bcrypt';
+import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';  // Potrebno za DOMPurify
+
+
 
 
 // Učitavanje vrednosti iz .env fajla
@@ -83,6 +87,12 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+
+// Middleware za parsiranje POST podataka
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+  
+
 // Funkcija za šifrovanje lozinki
 async function generateEncryptedPasswords() {
     const saltRounds = 10;
@@ -129,9 +139,10 @@ app.use(session({
 }));
 
 // Podesavanje view engine
+app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Middleware da bi se user prosledio u svaki ejs fajl
 app.use((req, res, next) => {
@@ -168,65 +179,6 @@ const validateLoginFields = (req, res, next) => {
     }
 };
 
-const validateCreateProject = (req, res, next) => {
-    console.log('create project!!!')
-    const description = req.body.description;
-    const name = req.body.name;
-
-    // Regularni izraz koji dozvoljava samo slova i razmake
-    const nameRegex2 = /^[A-Za-z0-9]+$/;
-
-    if (!nameRegex2.test(description) || !nameRegex2.test(name)) {
-        return res.render('create-project', { message: 'Description and Name can only contain letters and spaces!' });
-    } else {
-        next();
-    }
-};
-
-const validateEditProject = (req, res, next) => {
-    const newOption = req.body.newOption;
-    
-
-    // Regularni izraz koji dozvoljava samo slova i razmake
-    const nameRegex3 = /^[A-Za-z0-9,-]+$/;
-    ;
-
-    if (!nameRegex3.test(newOption)) {
-        return res.render('edit-project', { message: 'New Option  can only contain letters and spaces!' });
-    } else {
-        next();
-    }
-};
-
-const validateCreatePost = (req, res, next) => {
-    const title = req.body.title;
-    const content = req.body.content;
-    
-    console.log('POST VALIDATION!!!!')
-    // Regularni izraz koji dozvoljava samo slova i razmake
-    const nameRegex4 =  /^[A-Za-z0-9,-\s]+$/;
-
-
-    const test1 = "<Test>";
-    const test2 = "ValidTest-123<>";
-    const test3 = "!++++?????? ,";
-
-    console.log(nameRegex4.test(test1));  // false (NE bi trebalo da prođe)
-    console.log(nameRegex4.test(test2));  // true (treba da prođe)
-    console.log(nameRegex4.test(test3));  // true (treba da prođe)
-
-    if (!nameRegex4.test(title) || !nameRegex4.test(content)) {
-
-        console.log('POGRESNO!!!!!')
-        return res.render('option-posts', { message: 'Title Post and Content  can only contain letters and spaces!' });  
-        
-    } else {
-
-        next();
-    }
-};
-
-
 
 // Ruta za login stranicu
 app.get('/login', (req, res) => {
@@ -240,7 +192,7 @@ app.post("/login",validateLoginFields, async (req, res) => {
 
     // Pretraga korisnika u MongoDB-u
     const user = await User.findOne({ username: username });
-   
+
 
     if (!user) {
         //return res.status(400).send('Korisnik nije pronađen');
@@ -260,6 +212,10 @@ app.post("/login",validateLoginFields, async (req, res) => {
 });
 
 
+
+
+
+
 // Početna stranica
 app.get('/',(req, res) => {
     res.render('index');
@@ -270,7 +226,7 @@ app.get('/create-project', ensureAuthenticated, (req, res) => {
     res.render('create-project', { message:'' });
 });
 
-app.post('/create-project',validateCreateProject, async (req, res) => {
+app.post('/create-project', async (req, res) => {
     const { name, description, options } = req.body;
 
     let optionObjects = options.map(optionName => ({
@@ -356,7 +312,7 @@ app.get('/edit-project/:id', ensureAuthenticated, async (req, res) => {
 
 
 
-app.post('/project/:id/edit',validateEditProject, async (req, res) => {
+app.post('/project/:id/edit', async (req, res) => {
     const projectId = req.params.id;
     console.log('Project ID:', projectId); // Logujemo ID projekta koji se uređuje
 
@@ -427,10 +383,12 @@ app.get('/project/:projectId/:optionName/create-post', ensureAuthenticated, asyn
 });
 
 // Ruta za POST zahtev za kreiranje posta
-app.post('/project/:projectId/option/:optionName/create-post',validateCreatePost,  upload.single('imageUrl'), async (req, res) => {
+app.post('/project/:projectId/option/:optionName/create-post',  upload.single('imageUrl'), async (req, res) => {
     const { projectId, optionName } = req.params;
     const { title, content } = req.body;
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+    
 
     const project = await Project.findById(projectId);
     if (!project) 
@@ -459,12 +417,17 @@ app.post('/project/:projectId/option/:optionName/create-post',validateCreatePost
 // Editovanje postojećeg posta
 app.get('/project/:projectId/option/:optionName/edit/:postId', ensureAuthenticated, async (req, res) => {
     const { projectId, optionName, postId } = req.params;
+
+    
     
     try {
         // Pretpostavljamo da se tvoji podaci nalaze u MongoDB-u
         const project = await Project.findById(projectId);
         const option = project.options.find(o => o.name === optionName);
         const post = option.posts.find(p => p.id == postId);
+
+        console.log('Post content:', post.content);  // Proveri da li postoji sadržaj
+
         
         if (post) {
             res.render('edit', { 
