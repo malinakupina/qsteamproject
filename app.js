@@ -58,7 +58,9 @@ const projectSchema = new mongoose.Schema({
 const Project = mongoose.model('Project', projectSchema);
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
+
+
 
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
