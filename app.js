@@ -590,5 +590,6 @@ app.get('/logout', (req, res) => {
 
 // Pokretanje servera
 app.listen(port, () => {
+    console.log();
     console.log(`Server radi na http://localhost:${port}`);
 });
