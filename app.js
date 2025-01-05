@@ -596,7 +596,6 @@ app.get('/logout', (req, res) => {
 
 
 // Pokretanje servera
-app.listen(port, () => {
-    
-    console.log(`Server radi na http://localhost:${port}`);
+app.listen(3001, '0.0.0.0', () => {
+    console.log("Server is running on http://0.0.0.0:3001");
 });
