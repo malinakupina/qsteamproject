@@ -4,14 +4,14 @@ import session from 'express-session';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
-import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
+//import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
 import methodOverride from 'method-override';
 import bcrypt from 'bcrypt';
-import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';  // Potrebno za DOMPurify
+//import DOMPurify from 'dompurify';
+//import { JSDOM } from 'jsdom';  // Potrebno za DOMPurify
 
 
 
@@ -96,14 +96,13 @@ app.use(bodyParser.json());
 // Funkcija za šifrovanje lozinki
 async function generateEncryptedPasswords() {
     const saltRounds = 10;
-    const users = ['QS09', 'user2', 'user3']; // Vaš niz korisnika
-    const passwords = ['QSTeam2025', 'password2', 'password3']; // Niz lozinki
+    const users = [process.env.USER_1, process.env.USER_2, process.env.USER_3];
+    const passwords = [process.env.PASSWORD_1, process.env.PASSWORD_2, process.env.PASSWORD_3];
 
     const existingUsers = await User.find(); // Pretraži sve korisnike u bazi
 
-    // Ako već postoji neki korisnik u bazi, nemoj ponovo dodavati
     if (existingUsers.length > 0) {
-        console.log('Korisnici su već dodati u bazu.');
+        console.log('Korisnici su već dodati u bazu.');  
         return;
     }
 
@@ -212,10 +211,6 @@ app.post("/login",validateLoginFields, async (req, res) => {
 });
 
 
-
-
-
-
 // Početna stranica
 app.get('/',(req, res) => {
     res.render('index');
@@ -234,11 +229,16 @@ app.post('/create-project', async (req, res) => {
         posts: []
     }));
 
-    // Provera da li projekat sa istim imenom već postoji
-    const projectExists = await Project.findOne({ name: name });
+    // Normalizovanje unosa imena projekta na mala slova
+    const normalizedProjectName = name.toLowerCase();
+
+    // Provera da li projekat sa istim imenom već postoji (ignorisanjem velikih i malih slova)
+    const projectExists = await Project.findOne({ 
+        name: { $regex: new RegExp(`^${normalizedProjectName}$`, 'i') } 
+    });
 
     if (projectExists) {
-        return res.render('projects', {
+        return res.render('create-project', {
             message: 'Projekat sa ovim imenom već postoji!'
         });
     }
@@ -253,6 +253,7 @@ app.post('/create-project', async (req, res) => {
     await newProject.save();
     res.redirect('/projects');
 });
+
 
 // Projekti
 app.get('/projects', ensureAuthenticated, async (req, res) => {

@@ -1,0 +1,98 @@
+/* Stilovi za filtriranje */
+.filter-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+/* Stilovi za konteiner projekata */
+.projects-cards-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding-bottom: 20px;
+    margin-top: 60px; /* Povećanje margine za dodatno spuštanje kartica */
+}
+
+/* Stil za kartice */
+.project-card {
+    min-width: 250px;
+    min-height: 200px;
+    background-color: #e0e0e0; /* Tamnija boja pozadine kartice */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 40px; /* Povećano spuštanje kartica */
+}
+
+/* Dodano za header kartice */
+.project-card-header h3 {
+    font-size: 18px;
+    margin: 0;
+    text-align: center; /* Centriranje imena projekta */
+}
+
+/* Footer kartice */
+.project-card-footer {
+    margin-top: auto;
+}
+
+/* Stil za dugme za editovanje projekta */
+.btn-edit-project {
+    background-color: #4CAF50; /* Zelena boja za dugme */
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto; /* Centriranje dugmeta */
+}
+
+.btn-edit-project:hover {
+    background-color: #45a049;
+}
+
+/* Stil za link projekta (ime projekta) */
+.project-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;  /* Plava boja pozadine */
+    color: white;               /* Belo slovo */
+    text-decoration: none;      /* Bez podvlačenja */
+    border-radius: 5px;         /* Zaobljeni uglovi */
+    font-size: 16px;            /* Velicina fonta */
+    font-weight: bold;          /* Podebljan font */
+    transition: background-color 0.3s ease; /* Efekat prelaza za boje */
+    text-align: center;         /* Centriranje teksta unutar linka */
+    width: 100%;                /* Širina 100% da bi bio centriran */
+    box-sizing: border-box;     /* Računanje padding-a u širini */
+    margin: 0 auto;             /* Centriranje linka */
+}
+
+.project-link:hover {
+    background-color: #0056b3;  /* Tamnija plava kad se pređe mišem */
+    cursor: pointer;            /* Kursor u obliku ruke */
+}
+
+.filter-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+

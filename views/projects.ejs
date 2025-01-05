@@ -4,77 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projekti</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/modal1.css">
+    <link rel="stylesheet" href="/project_cards.css">
+    
+
 </head>
 <body>
     <header>
-        <% if (user) { %>
-            <h1 style="font-size: 30px;">Dobrodošao, <%= user.username %>!<br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
-        <% } else { %>
-            <h1>Dobrodošli na QS Team Projects Site</h1>
-        <% } %>
-        <% if (user) { %>
         <nav>
-            <a href="/">Početna</a>
-            <a href="/projects">Projekti</a>
             <% if (user) { %>
-                <a href="/logout">Logout</a>
+                <h1 style="font-size: 30px;">Dobrodošao, <%= user.username %>!<br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
+                <nav>
+                    <a href="/">Početna</a>
+                    <a href="/projects">Projekti</a>
+                    <a href="/logout">Logout</a>
+                </nav>
             <% } else { %>
-                <a href="/login">Login</a>
+                <h1>Dobrodošli na QS Team Projects Site</h1>
+                <nav>
+                    <a href="/">Početna</a>
+                    <a href="/projects">Projekti</a>
+                    <a href="/login">Login</a>
+                </nav>
             <% } %>
         </nav>
-        
     </header>
 
+    <div class="projects-container">
+        <h2 class="projects-title">Trenutno Kreirani Projekti</h2>
+        
+        <!-- Polje za filtriranje -->
+        <input type="text" id="filterInput" class="filter-input" placeholder="Pretraži projekte..." onkeyup="filterProjects()" class="filter-input">
 
-<div class="projects-container">
-    <h2 class="projects-title">Trenutno Kreirani Projekti</h2>
-    <ul class="post-list">
-        <% projects.forEach(project => { %>
-            <li class="post-item">               
-                 
-                <div class="project-item-container">
-                    <button id="deleteButton" class="btn-edit-project" data-id="<%= project.id %>">Delete</button>
-
-                                      
-                    <a href="/project/<%= project.id %>" class="project-link"><%= project.name %></a>
-                    <a href="/edit-project/<%= project.id %>" class="btn-edit-project">Edit</a>
+        <div class="projects-cards-container">
+            <% projects.forEach(project => { %>
+                <div class="project-card">
+                    <div class="project-card-header">
+                        <a href="/project/<%= project.id %>" class="project-link"><%= project.name %></a>
+                    </div>
+                    <div class="project-card-footer">
+                        <a href="/edit-project/<%= project.id %>" class="btn-edit-project">Edit</a>
+                    </div>
                 </div>
-                
-            </li>
-        <% }); %>
-    </ul>
-</div>
-<% } %>
+            <% }); %>
+        </div>
+    </div>
+    
+    <script>
+
+    function filterProjects() {
+        // Uzimamo vrednost iz polja za filtriranje
+        var input = document.getElementById('filterInput');
+        var filter = input.value.toUpperCase(); // Pretvaramo unos u velika slova
+        var projectCards = document.querySelectorAll('.project-card');
+
+        // Iteriramo kroz svaku karticu projekta
+        projectCards.forEach(function(card) {
+            var projectName = card.querySelector('.project-link').textContent;
+            if (projectName.toUpperCase().indexOf(filter) > -1) {
+                card.style.display = ''; // Prikazujemo karticu
+            } else {
+                card.style.display = 'none'; // Skrivamo karticu
+            }
+        });
+    }
 
 
-<%- include('partials/footer') %>
 
-<script>
-// Kada korisnik klikne na dugme za brisanje
-document.getElementById('deleteButton').addEventListener('click', function() {
-    const projectId = this.getAttribute('data-id');  // Pretpostavljamo da 'data-id' sadrži project ID
 
-    fetch('/delete-project/' + projectId, {
-        method: 'DELETE'
-    })
-    .then(response => {
-        // Ako odgovor nije uspešan, ispisujemo grešku
-        if (!response.ok) {
-            throw new Error('Greška na serveru: ' + response.status);
-        }
-        return response.json();  // Ako je odgovor OK, pretvori ga u JSON
-    })
-    .then(data => {
-        console.log(data);  // Ovde koristiš odgovor servera
-        alert('Projekat obrisan!');
-        window.location.href = '/projects';  // Preusmeravanje na listu projekata
-    })
-    .catch(error => {
-        console.error('Došlo je do greške:', error);
-        alert('Greška pri brisanju projekta');
-    });
-});
-</script>
- 
+    </script> 
+
+    <%- include('partials/footer') %>
+
+    
+
+
