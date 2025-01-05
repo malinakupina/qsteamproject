@@ -10,6 +10,11 @@ import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
 import methodOverride from 'method-override';
 import bcrypt from 'bcrypt';
+import cookieParser from 'cookie-parser';
+
+// Preporučeni način upotrebe
+app.use(cookieParser());
+
 //import DOMPurify from 'dompurify';
 //import { JSDOM } from 'jsdom';  // Potrebno za DOMPurify
 
