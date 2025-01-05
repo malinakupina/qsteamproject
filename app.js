@@ -13,7 +13,7 @@ import bcrypt from 'bcrypt';
 import cookieParser from 'cookie-parser';
 
 // Preporučeni način upotrebe
-app.use(cookieParser());
+
 
 //import DOMPurify from 'dompurify';
 //import { JSDOM } from 'jsdom';  // Potrebno za DOMPurify
