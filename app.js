@@ -12,7 +12,7 @@ import bcrypt from 'bcrypt';
 // Preporučeni način upotrebe
 
 
-
+const app = express();
 
 
 
@@ -58,9 +58,9 @@ const projectSchema = new mongoose.Schema({
 
 const Project = mongoose.model('Project', projectSchema);
 
-const app = express();
 
-const port = process.env.PORT || 3001;
+
+const port = process.env.PORT || 3002;
 
 
 
@@ -593,6 +593,6 @@ app.get('/logout', (req, res) => {
 
 
 // Pokretanje servera
-app.listen(3002, '0.0.0.0', () => {
-    console.log("Server is running on http://0.0.0.0:3002");
-});
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on http://0.0.0.0:${port}`);
+})
