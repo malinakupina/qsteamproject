@@ -4,19 +4,15 @@ import session from 'express-session';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
-//import fs from 'fs';  // Dodajte ovo na vrh fajla zajedno sa ostalim importima
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
 import methodOverride from 'method-override';
 import bcrypt from 'bcrypt';
-import cookieParser from 'cookie-parser';
-
 // Preporučeni način upotrebe
 
 
-//import DOMPurify from 'dompurify';
-//import { JSDOM } from 'jsdom';  // Potrebno za DOMPurify
+
 
 
 
@@ -63,6 +59,7 @@ const projectSchema = new mongoose.Schema({
 const Project = mongoose.model('Project', projectSchema);
 
 const app = express();
+
 const port = process.env.PORT || 3001;
 
 
@@ -596,6 +593,6 @@ app.get('/logout', (req, res) => {
 
 
 // Pokretanje servera
-app.listen(3001, '0.0.0.0', () => {
-    console.log("Server is running on http://0.0.0.0:3001");
+app.listen(3002, '0.0.0.0', () => {
+    console.log("Server is running on http://0.0.0.0:3002");
 });
