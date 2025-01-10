@@ -12,8 +12,12 @@
 </head>
 <body>
     <header>
-        <% if (user) { %>
-            <h1 style="font-size: 30px;">Dobrodošao, <%= user.username %>!<br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
+        <% if (user) {
+            
+            realName = getRealUserName(user.toString(),1)
+            
+            %>
+            <h1 style="font-size: 30px;"></h1><%= realName %>!<br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
         <% } else { %>
             <h1>Dobrodošli na QS Team Projects Site</h1>
         <% } %>

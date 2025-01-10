@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projekti</title>    
     <link rel="icon" href="/favicon.png" type="image/png">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css">    
 </head>
 <body>
     <header>
-        <% if (user) { %>
-            <h1 style="font-size: 30px;">Dobrodošao, <%= user.username %>!<br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
+        <% if (user) { 
+
+            realName = getRealUserName(user.toString(),1)
+            %>   
+            <h1 style="font-size: 30px;"><%= realName %><br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
         <% } else { %>
             <h1>Dobrodošli na QS Team Projects Site</h1>
         <% } %>

@@ -1,0 +1,70 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projekti</title>    
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/styles.css"> 
+    <link rel="stylesheet" href="/image_size.css">    
+</head>
+<body>
+    <header>
+        <% if (user) { 
+
+            realName = getRealUserName(user.toString(),1)
+            %>   
+            <h1 style="font-size: 30px;"><%= realName %><br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
+        <% } else { %>
+            <h1>Dobrodošli na QS Team Projects Site</h1>
+        <% } %>
+        <nav>
+            <a href="/">Početna</a>
+            <a href="/projects">Projekti</a>
+            <% if (user) { %>
+                <a href="/logout">Logout</a>
+            <% } else { %>
+                <a href="/login">Login</a>
+            <% } %>
+        </nav>
+    </header>
+
+<!-- Modalni Dijalog za Sliku -->
+<div id="imageWarningModal" class="modal">
+    <div class="modal-content">
+        <!-- Naslov -->
+        <h2 class="modal-title">Prevelika Slika</h2>
+        <hr class="modal-line">
+        
+        <!-- Glavni Tekst -->
+        <p><%= message %></p>
+        <p>Preporučujemo da koristite online alate kao što su <a href="https://www.iloveimg.com/resize-image" target="_blank">iLoveIMG</a> za smanjenje veličine slike.</p>
+        <p>Posle resizovanja slike i njenog downlodovanja, pritisnite dugme OK i pokušajte ponovo sa novom slikom.</p>
+        
+        <!-- Dugme OK -->
+        <button class="btn btn-ok" id="backButton">OK</button>
+    </div>
+</div>
+
+<script>
+    // Modalni dijalog za sliku
+    var modal = document.getElementById("imageWarningModal");
+    
+    // Prikazujemo modal
+    modal.style.display = "block";  
+
+    // Kada korisnik klikne na OK dugme, zatvaramo modal
+    document.getElementById('backButton').onclick = function() {
+        window.location.href = document.referrer; // Vraća korisnika na prethodnu stranicu
+    }
+    // Kada korisnik klikne bilo gde van modala, zatvaramo modal
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+<%- include("partials/footer.ejs") %>

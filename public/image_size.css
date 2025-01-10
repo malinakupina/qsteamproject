@@ -1,0 +1,67 @@
+/* Stilovi za Modalni Dijalog */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Poluprozirna pozadina */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 8px; /* Zaobljeni uglovi */
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Senka oko modalnog prozora */
+    text-align: center;
+}
+
+/* Stilizovanje Naslova */
+.modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Linija ispod naslova */
+.modal-line {
+    border: 1px solid #ddd;
+    width: 50%;
+    margin: 0 auto 20px auto;
+}
+
+/* Stilizovanje glavnog teksta */
+.modal-content p {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Stilizovanje OK dugmeta */
+.btn-ok {
+    background-color: #4CAF50; /* Zelena boja za OK dugme */
+    color: white;
+    padding: 15px 32px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    width: 150px; /* Možete prilagoditi veličinu dugmeta */
+}
+
+/* Efekat na hover dugme */
+.btn-ok:hover {
+    background-color: #45a049; /* Tamnija zelena boja kad je dugme prebačeno */
+}

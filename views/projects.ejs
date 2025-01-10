@@ -14,8 +14,10 @@
 <body>
     <header>
         <nav>
-            <% if (user) { %>
-                <h1 style="font-size: 30px;">Dobrodošao, <%= user.username %>!<br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
+            <% if (user) { 
+                realName = getRealUserName(user.toString(),1)
+                %>
+                <h1 style="font-size: 30px;"><%=realName %><br> Uživajte u svom vremenu na QS Team Projects sajtu i neka svaki projekat bude uspješan!</h1>
                 <nav>
                     <a href="/">Početna</a>
                     <a href="/projects">Projekti</a>
@@ -42,8 +44,15 @@
             <% projects.forEach(project => { %>
                 <div class="project-card">
                     <div class="project-card-header">
-                        <a href="/project/<%= project.id %>" class="project-link"><%= project.name %></a>
+                        <a href="/project/<%= project.id %>" class="project-link"  data-description="<%= project.description %>"><%= project.name %></a>
                     </div>
+                    
+                    <div class="project-info">
+                        <%  realName = getRealUserName(user.toString(),2) %>
+                        <p>Created by: <%= getRealUserName(project.username,2) %></p> 
+                        <p>Date created: <%= new Date(project.createdAt).toLocaleDateString() %></p> 
+                    </div>
+
                     <div class="project-card-footer">
                         <a href="/edit-project/<%= project.id %>" class="btn-edit-project">Edit</a>
                     </div>
@@ -71,8 +80,33 @@
         });
     }
 
+    // Tooltip za prikaz opisa pri hoveru
+    document.addEventListener('DOMContentLoaded', function() {
+        const projectLinks = document.querySelectorAll('.project-link'); // Svi linkovi sa nazivima projekata
+        const tooltip = document.createElement('div'); // Napravimo tooltip element
+        tooltip.classList.add('tooltip');
+        document.body.appendChild(tooltip); // Dodajemo tooltip u telo stranice
 
+        projectLinks.forEach(link => {
+            link.addEventListener('mouseover', function(event) {
+                // Uzimamo vrednost opisa iz data-atributa
+                const description = event.target.getAttribute('data-description');
+                tooltip.textContent = description; // Prikazujemo opis u tooltip-u
+                tooltip.style.display = 'block'; // Prikazujemo tooltip
 
+                // Pozicioniranje tooltip-a ispod linka
+                const rect = event.target.getBoundingClientRect();
+                tooltip.style.left = `${rect.left + window.scrollX}px`;
+                tooltip.style.top = `${rect.bottom + window.scrollY + 5}px`; // 5px udaljenost od linka
+            });
+
+            link.addEventListener('mouseout', function() {
+                tooltip.style.display = 'none'; // Sakrivamo tooltip kad miš napusti element
+            });
+        });
+    });
+
+   
 
     </script> 
 

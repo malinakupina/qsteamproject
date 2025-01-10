@@ -9,13 +9,10 @@ import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';  // Uključi ovo ako koristiš MongoDB bez Mongoose
 import methodOverride from 'method-override';
 import bcrypt from 'bcrypt';
+import he from 'he';  // za encoding HTML karaktera
 // Preporučeni način upotrebe
 
-
 const app = express();
-
-
-
 
 // Učitavanje vrednosti iz .env fajla
 dotenv.config();
@@ -53,20 +50,59 @@ const optionSchema = new mongoose.Schema({
 const projectSchema = new mongoose.Schema({
     name: String,
     description: String,
-    options: [optionSchema]
+    options: [optionSchema],
+    username: { type: String, required: true },  // Dodano polje za korisničko ime
+    createdAt: { type: Date, default: Date.now }  // Automatski se postavlja trenutni datum 
 });
 
 const Project = mongoose.model('Project', projectSchema);
 
+const userSchema = new mongoose.Schema({
+    username: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
+});
+
+const User = mongoose.model('User', userSchema);
 
 
-const port = process.env.PORT || 3002;
-
-
+const port = process.env.PORT;
 
 // Inicijalizacija za ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
+//midleware za upload slike
+// Middleware za greške kod upload-a
+
+
+
+
+
+function multerErrorHandling(err, req, res, next) {
+
+    
+
+    // Ako je greška zbog prevelikog fajla
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            // Prosleđujemo podatke o projektu i opciji u render funkciji
+            return res.render('large-image', { 
+                message: 'Slika je prevelika, maksimalna veličina je 2MB.',
+               
+            });
+        }
+    } else if (err) {
+        return res.render('large-image', { 
+            message: 'Došlo je do greške prilikom upload-a fajla.',
+           
+        });
+    }
+    next(); // Ako nema greške, idemo dalje
+}
+
+
+
 
 // Set up multer for image upload
 const storage = multer.diskStorage({
@@ -78,18 +114,13 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+//stari kod za  - > const upload = multer({ storage: storage });
+//novi kod za ogranicenje slike za upload
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 2 * 1024 * 1024 }, // Postavite maksimalnu veličinu na 2MB
+});//.single('imageUrl');
 
-
-const passwords = ['QSTeam2025', 'password2', 'password3'];
-const users = ['QS09','user2','user3']
-
-const userSchema = new mongoose.Schema({
-    username: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
-});
-
-const User = mongoose.model('User', userSchema);
 
 
 // Middleware za parsiranje POST podataka
@@ -97,33 +128,67 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
   
 
-// Funkcija za šifrovanje lozinki
+//generisanje novih i kontrola postojecih korisnika u bazi
 async function generateEncryptedPasswords() {
     const saltRounds = 10;
-    const users = [process.env.USER_1, process.env.USER_2, process.env.USER_3];
-    const passwords = [process.env.PASSWORD_1, process.env.PASSWORD_2, process.env.PASSWORD_3];
+    // Provera da li su varijable okruženja postavljene
+    const users = [
+        process.env.USER_1,
+        process.env.USER_2,
+        process.env.USER_3,
+        process.env.USER_4,
+        process.env.USER_5,
+        process.env.USER_6,
+        process.env.USER_7,
+        process.env.USER_8
+    ];
+    const passwords = [
+        process.env.PASSWORD_1,
+        process.env.PASSWORD_2,
+        process.env.PASSWORD_3,
+        process.env.PASSWORD_4,
+        process.env.PASSWORD_5,
+        process.env.PASSWORD_6,
+        process.env.PASSWORD_7,
+        process.env.PASSWORD_8
+    ];
 
-    const existingUsers = await User.find(); // Pretraži sve korisnike u bazi
-
-    if (existingUsers.length > 0) {
-        console.log('Korisnici su već dodati u bazu.');  
+    // Proveri ako varijable okruženja nisu postavljene
+    if (users.some(user => !user) || passwords.some(password => !password)) {
+        console.log('Greška: Neke od varijabli okruženja nisu postavljene.');
         return;
     }
 
-    for (let i = 0; i < users.length; i++) {
-        const hashedPassword = await bcrypt.hash(passwords[i], saltRounds);
-        const newUser = new User({
-            username: users[i],
-            password: hashedPassword,
-        });
+    // Pretraži sve korisnike u bazi
+    const existingUsers = await User.find();
 
-        await newUser.save();
+    // Kreiraj nove korisnike samo ako nisu pronađeni korisnici u bazi
+    for (let i = 0; i < users.length; i++) {
+        // Proveri da li korisnik već postoji u bazi
+        const userExists = existingUsers.some(user => user.username === users[i]);
+
+        if (userExists) {
+            console.log(`Korisnik ${users[i]} već postoji u bazi, preskočen je.`);
+            continue;  // Preskoči kreiranje korisnika
+        }
+
+        try {
+            const hashedPassword = await bcrypt.hash(passwords[i], saltRounds);
+            const newUser = new User({
+                username: users[i],
+                password: hashedPassword,
+            });
+
+            // Sačuvaj novog korisnika u bazi
+            await newUser.save();
+            console.log(`Korisnik ${users[i]} je uspešno sačuvan sa šifrovanim lozinkama.`);
+        } catch (error) {
+            console.error(`Greška prilikom dodavanja korisnika ${users[i]}:`, error);
+        }
     }
 
-    console.log('Korisnici su uspešno dodati u bazu sa šifrovanim lozinkama');
+    console.log('Generisanje korisnika je završeno.');
 }
-
-
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -172,7 +237,7 @@ const validateLoginFields = (req, res, next) => {
     const password = req.body.password;
 
     // Regularni izraz koji dozvoljava samo slova i razmake i brojeve
-    const nameRegex1 =/^[A-Za-z0-9+,\-!\?;:.()'" ]+$/;
+    const nameRegex1 =/^[A-Za-z0-9+,\-!@\?;:.()'" ]+$/;
     
 
     if (!nameRegex1.test(username) || !nameRegex1.test(password)) {
@@ -181,6 +246,106 @@ const validateLoginFields = (req, res, next) => {
         next();
     }
 };
+
+
+
+// Middleware za validaciju unosa pri kreiranju projekta
+const validateProjectFields = (req, res, next) => {
+    const { name, description } = req.body;
+
+    // Regularni izraz za ime projekta (samo alfanumerički karakteri, razmaci, i neki specijalni karakteri)
+    const nameRegex = /^[A-Za-z0-9\s\-\_\&\+\,\.]+$/;
+
+    if (!nameRegex.test(name)) {
+        return res.render('create-project', {
+            message: 'Ime projekta može sadržavati samo slova, brojeve, i sledeće specijalne karaktere: -, _, &, +, , .'
+        });
+    }
+
+    // Skrivanje potencijalno opasnih HTML karaktera
+    req.body.name = he.encode(name);
+    req.body.description = he.encode(description); // Encoding opasnih karaktera u opis
+
+    next();  // Ako je sve u redu, ide dalje
+};
+
+// Middleware za validaciju i sanitizaciju post podataka
+const validatePostFields = (req, res, next) => {
+    const { title, content } = req.body;
+
+    // Proveravamo da li su oba polja popunjena
+    if (!title || !content) {
+        return res.render('option-post', { message: 'Title and Content are required.' });
+    }
+
+    // Sanitizacija - pretvaranje specijalnih HTML karaktera u HTML entitete
+    req.body.title = he.encode(title);  // Sanitizuje title
+    req.body.content = he.encode(content);  // Sanitizuje content
+
+    next();  // Poziva sledeći middleware ili glavnu funkciju rute
+};
+
+//function to get real user name
+// Funkcija koja će biti dostupna svim EJS fajlovima
+function getRealUserName(userName,num) {
+    if(userName == process.env.USER_1 && num==1)
+        return "Poštovanje Danijele, ";
+    else if(userName == process.env.USER_1 && num==2)
+        return "Danijel Udovičić";
+    else if(userName == process.env.USER_2 && num==1)
+        return "Poštovanje Alene, ";
+    else if(userName == process.env.USER_2 && num==2)
+        return "Alen Husić";
+    else if(userName == process.env.USER_3 && num==1)
+        return "Poštovanje Nenade, ";
+    else if(userName == process.env.USER_3 && num==2)
+        return "Nenad Malinović";
+    else if(userName == process.env.USER_4 && num==1)
+        return "Poštovanje Zahiru, ";
+    else if(userName == process.env.USER_4 && num==2)
+        return "Zahir Šabanović";
+    else if(userName == process.env.USER_5 && num==1)
+        return "Poštovanje Vasiljeviću, " ;
+    else if(userName == process.env.USER_5 && num==2)
+        return "Danijel Vasiljević" ;
+    else if(userName == process.env.USER_6 && num==1)
+        return "Poštovanje Katarina, ";
+    else if(userName == process.env.USER_6 && num==2)
+        return "Katarina Pepić";
+    else if(userName == process.env.USER_7 && num==1)
+        return "Poštovanje Luka, ";
+    else if(userName == process.env.USER_7 && num==2)
+        return "Luka Nikolić";
+    else if(userName == process.env.USER_8 && num==1)
+        return "Poštovanje Nataša, ";
+    else if(userName == process.env.USER_8 && num==2)
+        return "Nataša Maksimović";
+    else
+        return "";
+        
+}
+
+// Middleware koji dodaje funkcije u res.locals
+app.use((req, res, next) => {
+    res.locals.getRealUserName = getRealUserName;  // Funkcija je dostupna u svim EJS fajlovima
+    next();  // Nastavi sa izvršenjem sledeće middleware funkcije
+});
+
+
+//end of function for real user name
+
+
+// Početna stranica
+app.get('/',(req, res) => {
+    //res.render('index');
+     // Proverite da li je korisnik prijavljen (preko sesije)
+     const user = req.session.user;
+
+     // Renderujte početnu stranicu i prosleđujte podatke o korisniku
+     res.render('index', { user });
+});
+
+
 
 
 // Ruta za login stranicu
@@ -215,17 +380,13 @@ app.post("/login",validateLoginFields, async (req, res) => {
 });
 
 
-// Početna stranica
-app.get('/',(req, res) => {
-    res.render('index');
-});
 
 // Kreiranje projekta
 app.get('/create-project', ensureAuthenticated, (req, res) => {
     res.render('create-project', { message:'' });
 });
 
-app.post('/create-project', async (req, res) => {
+app.post('/create-project',validateProjectFields, async (req, res) => {
     const { name, description, options } = req.body;
 
     let optionObjects = options.map(optionName => ({
@@ -251,7 +412,9 @@ app.post('/create-project', async (req, res) => {
     const newProject = new Project({
         name,
         description,
-        options: optionObjects
+        options: optionObjects,
+        username: req.session.user,  // Čuvanje korisničkog imena
+        createdAt: new Date()        // Čuvanje datuma kreiranja
     });
 
     await newProject.save();
@@ -376,45 +539,60 @@ app.post('/project/:id/edit', async (req, res) => {
 //kraj editovanja projekta
 
 // Ruta za prikazivanje postova za određenu opciju
-app.get('/project/:projectId/:optionName/create-post', ensureAuthenticated, async (req, res) => {
+app.get('/project/:projectId/:optionName/create-post',
+     ensureAuthenticated, async (req, res) => {
     const { projectId, optionName } = req.params;
     const project = await Project.findById(projectId);
+
     if (!project) return res.status(404).send('Projekt nije pronađen');
 
     const option = project.options.find(o => o.name === optionName);
     if (!option) return res.status(404).send('Opcija nije pronađena');
 
+    
+    
+
     res.render('option-posts', { project, option ,message:'' });
 });
 
-// Ruta za POST zahtev za kreiranje posta
-app.post('/project/:projectId/option/:optionName/create-post',  upload.single('imageUrl'), async (req, res) => {
-    const { projectId, optionName } = req.params;
-    const { title, content } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+app.post('/project/:projectId/option/:optionName/create-post', 
+    upload.single('imageUrl'),  // Multer middleware za upload slike
+    validatePostFields,  // Tvoj middleware za validaciju polja
+    multerErrorHandling, //Midleware za velicinu slike
+    async (req, res) => {
+        const { projectId, optionName } = req.params;
+        const { title, content } = req.body;
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;  // Slika ako postoji
 
-    
+        // Pronađi projekat na osnovu ID-a
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.render('option-posts', { message: 'Projekt nije pronađen' });
+        }
 
-    const project = await Project.findById(projectId);
-    if (!project) 
-    return res.render('option-post',{message:'No Project Found'});
+        // Pronađi opciju unutar projekta
+        const option = project.options.find(o => o.name === optionName);
+        if (!option) {
+            return res.render('option-posts', { message: 'Opcija nije pronađena' });
+        }
 
-    const option = project.options.find(o => o.name === optionName);
-    if (!option) 
-    return res.render('option-post',{message:'No Option Found'});
+        // Kreiraj novi post
+        const newPost = {
+            title,
+            content,
+            imageUrl,
+            date: new Date()
+        };
 
-    const newPost = {
-        title,
-        content,
-        imageUrl,
-        date: new Date()
-    };
+        // Dodaj post u opciju
+        option.posts.push(newPost);
+        await project.save();  // Spasi promene u bazi
 
-    option.posts.push(newPost);
-    await project.save();
-
-    res.redirect(`/project/${project.id}/${option.name}`);
-});
+        // Prebaci korisnika na stranicu sa svim postovima te opcije
+        res.redirect(`/project/${project.id}/${option.name}`);
+    }
+);
+//kraj kreiranja posta
 
 
 
@@ -449,7 +627,8 @@ app.get('/project/:projectId/option/:optionName/edit/:postId', ensureAuthenticat
     }
 });
 
-app.post('/project/:projectId/option/:optionName/edit/:postId', upload.single('imageUrl'), async (req, res) => {
+app.post('/project/:projectId/option/:optionName/edit/:postId', upload.single('imageUrl'),
+ validatePostFields,multerErrorHandling, async (req, res) => {
     const { projectId, optionName, postId } = req.params;
     const { title, content } = req.body;
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
@@ -470,6 +649,11 @@ app.post('/project/:projectId/option/:optionName/edit/:postId', upload.single('i
 
     res.redirect(`/project/${projectId}/${optionName}`);
 });
+
+
+
+
+//kraj editovanja posta
 
 // Brisanje posta
 // Prikazivanje modalnog prozora za potvrdu brisanja posta
@@ -567,20 +751,6 @@ app.get('/project/:projectId/option/:optionName', ensureAuthenticated, (req, res
             res.redirect('/');
         });
 });
-
-
-///////// ******* RUTA ZA BRISANJE PROJEKTA ***** /////////
-
-
-
-
-
-
-
-
-///////// *******KRAJ RUTE ZA BRISANJE PROJEKTA ***** /////////
-
-
 
 
 // Logout korisnika
