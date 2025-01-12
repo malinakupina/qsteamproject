@@ -5,14 +5,14 @@
 <form action="/project/<%= project.id %>/option/<%= option.name %>/create-post" method="POST" enctype="multipart/form-data">
     <div class="form-group">
         <label for="title">Naslov:</label>
-        <input type="text" id="title" name="title" required>
+        <input type="text" id="title" name="title" autocomplete="off" required>
     </div>
     <div class="form-group">
         <label for="content">Sadržaj:</label>
-        <textarea id="content" name="content" required></textarea>
+        <textarea id="content" name="content" autocomplete="off" required></textarea>
     </div>
     <div class="form-group">
-        <label for="imageUrl">Slika (opcionalno):</label>
+        <label for="imageUrl">Slika (opcionalno, Max Size 2MB):</label>
         <input type="file" id="imageUrl" name="imageUrl" accept="image/*">
     </div>
     <button type="submit" class="btn">Kreiraj Post</button>

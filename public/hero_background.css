@@ -1,0 +1,50 @@
+/* Hero sekcija - pozadina sa slikom */
+.hero-image {
+  background-image: url("production.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  height: 80vh; /* Visina pozadine je povećana */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tekst unutar hero sekcije */
+.hero-text {
+  text-align: justify;
+  position: absolute;
+  top: 50%; /* Pozicioniraj tekst u sredinu */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color:#add8e6;
+  font-size: 1.2rem; /* Smanjen font */
+  max-width: 70%; /* Ograničena širina */
+  padding: 20px;
+  border: 2px 2px 0px 2px solid black; /* Crni okvir oko teksta */
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.6); /* Uklonjena pozadina */
+}
+
+.title_project {
+  text-align: center;
+  
+  color: rgb(213, 221, 215);
+}
+
+/* Dugme ispod teksta */
+.login-btn {
+  position: absolute;  
+  left:50%;
+  transform: translateX(-50%); /* Centriraj dugme */
+  padding: 15px 30px;  
+  color: white;
+  background-color: #4CAF50; /* Zelena boja za dugme */
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  z-index: 10; /* Dugme ispred pozadine */
+}

@@ -71,39 +71,6 @@ const port = process.env.PORT;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-//midleware za upload slike
-// Middleware za greške kod upload-a
-
-
-
-
-
-function multerErrorHandling(err, req, res, next) {
-
-    
-
-    // Ako je greška zbog prevelikog fajla
-    if (err instanceof multer.MulterError) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
-            // Prosleđujemo podatke o projektu i opciji u render funkciji
-            return res.render('large-image', { 
-                message: 'Slika je prevelika, maksimalna veličina je 2MB.',
-               
-            });
-        }
-    } else if (err) {
-        return res.render('large-image', { 
-            message: 'Došlo je do greške prilikom upload-a fajla.',
-           
-        });
-    }
-    next(); // Ako nema greške, idemo dalje
-}
-
-
-
-
 // Set up multer for image upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -114,12 +81,47 @@ const storage = multer.diskStorage({
     }
 });
 
+// Filtriranje fajlova po ekstenziji
+const fileFilter = (req, file, cb) => {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];  // Dozvoljene ekstenzije
+    const ext = path.extname(file.originalname).toLowerCase();  // Ekstenzija fajla, sve u malim slovima
+
+    // Ako je ekstenzija dozvoljena, nastavi sa uploadom, inače odbaci
+    if (allowedExtensions.includes(ext)) {
+        return cb(null, true);  // Dozvoljava upload
+    } else {
+        return cb(new Error('Nepodržana ekstenzija fajla. Dozvoljeni su samo jpg, jpeg i png formati.'), false);
+    }
+};
+
 //stari kod za  - > const upload = multer({ storage: storage });
 //novi kod za ogranicenje slike za upload
 const upload = multer({
     storage: storage,
     limits: { fileSize: 2 * 1024 * 1024 }, // Postavite maksimalnu veličinu na 2MB
+    fileFilter: fileFilter  // Dodajemo naš filter za fajlove
 });//.single('imageUrl');
+
+function multerErrorHandling(err, req, res, next) {
+    // Ako je greška vezana za veličinu fajla
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.render('large-image', { 
+                message: 'Slika je prevelika, maksimalna veličina je 2MB.',
+            });
+        }
+    }
+
+    // Ako imamo neku drugu grešku (neispravna ekstenzija fajla)
+    if (err) {
+        return res.render('large-image', { 
+            message: err.message,  // Prikazujemo poruku greške iz fileFilter-a
+        });
+    }
+
+    // Ako nema greške, idemo dalje
+    next();
+}
 
 
 

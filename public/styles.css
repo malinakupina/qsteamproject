@@ -371,10 +371,11 @@ ul li {
   flex-direction: column;
   justify-content: center; /* Centriranje sadržaja vertikalno */
   align-items: center;
-  height: 90vh;  /* Visina stranice 90% */
+  /* height: 30vh; Visina stranice 90% */
   text-align: center;
   font-size: 1.5em;
-  margin-top: -70px; /* Manji pomak prema gore */
+  margin-top: 600px; /* Manji pomak prema gore */
+  z-index: 10;
 }
 
 /* Stil za kontejner linkova */

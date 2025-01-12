@@ -1,18 +1,38 @@
 <%- include('partials/header') %>
 
+<div class="hero-image">
+    <div class="hero-text">
+        <h1 class="title_project">QS Team Projects GUI</h1>
+        <p>Zdravo!
 
-<div class="container welcome-message">
-    <h1 class="title">QS Team Projects GUI</h1>
+            Dobrodošli na naš projekat! Ovaj prostor je kreiran sa ciljem da vam pružimo sveobuhvatan edukativni materijal, ali i da vas inspirišemo da postanete aktivni učesnici i kreirate sadržaj koji će koristiti i vama i vašim kolegama. Naša namera je da ovaj projekat postane centralno mesto za učenje, razmenu znanja i praktičnu primenu vaših veština.
 
-    <% if (!user) { %>  <!-- Check if user is not defined -->
-        <a href="/login" class="btn">Dobrodošli na QS Team Projects Site. Molimo Vas da se logujete.</a>
-    <% } else { %>
-        <div class="btn-container">
-            <a href="/projects" class="btn">Trenutno Kreirani Projekti</a>
-            <a href="/create-project" class="btn">Kreiraj Novi Projekat</a>
-        </div>
-        
-    <% } %>
+            Sadržaj ovog projekta pokriva ključne aspekte rada u industriji, kao što su vizuelna kontrola, povezivanje na tester, testiranje, kao i priprema dokumentacije za kupce. Sve ove oblasti su od suštinskog značaja za vaš svakodnevni rad, i kroz ovaj projekat pružamo vam detaljne informacije, uputstva i primere kako biste mogli da ih savladate i primenjujete u praksi.
+
+            Najlepši deo ovog projekta je što ćete moći da ne samo učite iz postojećeg sadržaja, već i da doprinosite. Imate mogućnost da kreirate nove projekte, postove, dodajete informacije i delite svoja iskustva. Na ovaj način, doprinosite rastu zajednice i stvaranju bogatog izvora znanja za sve.
+
+            Verujemo da će vam ovaj projekat pomoći da se dodatno razvijate u svom profesionalnom okruženju i da ćete naučiti mnoge nove veštine koje će vam biti od koristi. Nadamo se da ćete uživati u procesu učenja i deljenja!
+
+            Dobrodošli još jednom, i neka vas ovaj projekat inspiriše da stalno napredujete!
+
+            Srdačno,
+            Vas, QS Team
+        </p>
+    </div> 
+    <div class="container welcome-message">
+        <% if (!user) { %>  
+            <a href="/login" class="btn login-btn">Dobrodošli na QS Team Projects Site.<br> Molimo Vas da se logujete.</a>
+        <% } else { %>
+            <div class="btn-container">
+                <a href="/projects" class="btn">Trenutno Kreirani Projekti</a>
+                <a href="/create-project" class="btn">Kreiraj Novi Projekat</a>
+            </div>
+        <% } %>
+    </div>
 </div>
+
+
+
+
 
 <%- include('partials/footer') %>
